@@ -14,7 +14,7 @@
  *   limitations under the License.
  */
 
-package cherry.js;
+package cherry.util.js;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;

@@ -14,7 +14,7 @@
  *   limitations under the License.
  */
 
-package cherry.io;
+package cherry.util.io;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;

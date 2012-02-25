@@ -14,7 +14,7 @@
  *   limitations under the License.
  */
 
-package cherry.js;
+package cherry.util.js;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
