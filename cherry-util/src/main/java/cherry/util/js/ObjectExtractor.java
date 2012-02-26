@@ -73,8 +73,7 @@ import javax.script.ScriptException;
 public class ObjectExtractor {
 
 	/** 変換処理用JavaScriptスクリプト名. */
-	private static String SCRIPT_FILE = ObjectExtractor.class.getName()
-			.replaceAll("\\.", "/") + ".js";
+	private static String SCRIPT_FILE = "ObjectExtractor.js";
 
 	/** JavaScriptコード実行用スクリプトエンジン. */
 	private ScriptEngine engine;
@@ -85,9 +84,8 @@ public class ObjectExtractor {
 	public void initialize() {
 		ScriptEngineManager manager = new ScriptEngineManager();
 		engine = manager.getEngineByName("JavaScript");
-		ClassLoader cl = getClass().getClassLoader();
-		Reader reader = new InputStreamReader(
-				cl.getResourceAsStream(SCRIPT_FILE), Charset.forName("UTF-8"));
+		Reader reader = new InputStreamReader(getClass().getResourceAsStream(
+				SCRIPT_FILE), Charset.forName("UTF-8"));
 		try {
 			engine.eval(reader);
 		} catch (ScriptException ex) {
