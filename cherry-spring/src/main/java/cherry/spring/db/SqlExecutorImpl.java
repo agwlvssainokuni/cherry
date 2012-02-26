@@ -20,8 +20,10 @@ import static cherry.spring.db.SqlUtil.nextSql;
 
 import java.io.IOException;
 import java.io.Reader;
+import java.util.HashMap;
 import java.util.Map;
 
+import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcDaoSupport;
 
 /**
@@ -37,17 +39,32 @@ public class SqlExecutorImpl extends NamedParameterJdbcDaoSupport implements
 	 *            SQL文の読込み元
 	 * @param paramMap
 	 *            SQLに受渡すパラメタ
+	 * @param continueOnError
+	 *            SQL実行エラーで継続するか否か
 	 * @throws IOException
 	 *             SQL文の読込みでエラー
 	 */
 	@Override
-	public void execute(Reader reader, Map<String, ?> paramMap)
-			throws IOException {
+	public void execute(Reader reader, Map<String, ?> paramMap,
+			boolean continueOnError) throws IOException {
+
+		paramMap = (paramMap == null ? new HashMap<String, Object>() : paramMap);
 
 		String sql;
 		while ((sql = nextSql(reader)) != null) {
-			getNamedParameterJdbcTemplate().update(sql, paramMap);
+
+			sql = sql.trim();
+			if (sql.isEmpty()) {
+				continue;
+			}
+
+			try {
+				getNamedParameterJdbcTemplate().update(sql, paramMap);
+			} catch (DataAccessException ex) {
+				if (!continueOnError) {
+					throw ex;
+				}
+			}
 		}
 	}
-
 }

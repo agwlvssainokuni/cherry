@@ -35,10 +35,13 @@ public interface SqlExecutor {
 	 *            SQL文の読込み元
 	 * @param paramMap
 	 *            SQLに受渡すパラメタ
+	 * @param continueOnError
+	 *            SQL実行エラーで継続するか否か
 	 * @throws IOException
 	 *             SQL文の読込みでエラー
 	 */
 	@Transactional(rollbackFor = { DataAccessException.class, IOException.class })
-	void execute(Reader reader, Map<String, ?> paramMap) throws IOException;
+	void execute(Reader reader, Map<String, ?> paramMap, boolean continueOnError)
+			throws IOException;
 
 }
