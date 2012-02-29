@@ -65,6 +65,11 @@ public class CsvCreator {
 	 *             データ書込みエラー
 	 */
 	public void write(List<String> record) throws IOException {
+
+		if (record == null || record.isEmpty()) {
+			return;
+		}
+
 		Iterator<String> fields = record.iterator();
 		for (int i = 0; fields.hasNext(); i++) {
 			if (i > 0) {
@@ -72,6 +77,7 @@ public class CsvCreator {
 			}
 			writeField(writer, fields.next());
 		}
+
 		writer.write(recordSeparator);
 	}
 
