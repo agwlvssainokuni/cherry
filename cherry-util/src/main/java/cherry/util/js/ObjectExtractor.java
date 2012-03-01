@@ -84,8 +84,9 @@ public class ObjectExtractor {
 	public void initialize() {
 		ScriptEngineManager manager = new ScriptEngineManager();
 		engine = manager.getEngineByName("JavaScript");
-		Reader reader = new InputStreamReader(getClass().getResourceAsStream(
-				SCRIPT_FILE), Charset.forName("UTF-8"));
+		Reader reader = new InputStreamReader(
+				ObjectExtractor.class.getResourceAsStream(SCRIPT_FILE),
+				Charset.forName("UTF-8"));
 		try {
 			engine.eval(reader);
 		} catch (ScriptException ex) {
