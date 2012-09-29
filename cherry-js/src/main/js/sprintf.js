@@ -35,38 +35,38 @@ function sprintf(template) {
 
 	var index = 1;
 	return template.replace(
-			/%([-+0 ]*)([1-9][0-9]*)?(\.([1-9][0-9]*))?([dfs%])/g, function(m,
-					flag, widthS, dmy0, precS, type, o, t) {
+			/%([\-+0 ]*)([1-9][0-9]*)?(\.([1-9][0-9]*))?([dfs%])/g, function(m,
+					flag, widthArg, dmy0, precArg, type, o, t) {
 
 				if (type == "%") {
 					return "%";
 				}
 
-				var width = (widthS == undefined ? 0 : Number(widthS));
-				var prec = (precS == undefined ? 0 : Number(precS));
+				var width = (widthArg === undefined ? 0 : Number(widthArg));
+				var prec = (precArg === undefined ? 0 : Number(precArg));
 
 				var src = sprintf.arguments[index++];
 				if (type == "s") {
 
-					var val = src.toString();
+					var valS = src.toString();
 
-					if (prec != 0 && val.length > prec) {
-						val = val.substring(0, prec);
+					if (prec !== 0 && valS.length > prec) {
+						valS = valS.substring(0, prec);
 					}
 
-					if (width == 0) {
-						return val;
+					if (width === 0) {
+						return valS;
 					}
-					if (val.length >= width) {
-						return val;
+					if (valS.length >= width) {
+						return valS;
 					}
 
 					if (flag.indexOf("-") >= 0) {
-						return val + genpad(" ", width - val.length);
+						return valS + genpad(" ", width - valS.length);
 					} else if (flag.indexOf("0") >= 0) {
-						return genpad("0", width - val.length) + val;
+						return genpad("0", width - valS.length) + valS;
 					} else {
-						return genpad(" ", width - val.length) + val;
+						return genpad(" ", width - valS.length) + valS;
 					}
 				}
 
@@ -74,76 +74,79 @@ function sprintf(template) {
 					return "NaN";
 				}
 
-				var val;
+				var valN;
 				if (type == "d") {
-					val = Math.floor(src >= 0 ? src : -src).toString();
-					if (prec != 0 && val.length < prec) {
-						val = genpad("0", prec - val.length) + val;
+					valN = Math.floor(src >= 0 ? src : -src).toString();
+					if (prec !== 0 && valN.length < prec) {
+						valN = genpad("0", prec - valN.length) + valN;
 					}
 				} else {
 					var absVal = (src >= 0 ? src : -src);
 					var intVal = Math.floor(absVal);
 					var fracVal = absVal - intVal;
-					val = intVal.toString();
-					if (prec != 0) {
+					valN = intVal.toString();
+					if (prec !== 0) {
 						var v = Math.floor(fracVal * Math.pow(10, prec))
 								.toString();
-						val = val + "." + genpad("0", prec - v.length) + v;
+						valN = valN + "." + genpad("0", prec - v.length) + v;
 					} else {
 						var v = fracVal.toString();
 						if (v == "0") {
-							val = val + ".0";
+							valN = valN + ".0";
 						} else {
-							val = val + v.substring(1, v.length);
+							valN = valN + v.substring(1, v.length);
 						}
 					}
 				}
 
-				if (width == 0) {
-					return (src >= 0 ? val : "-" + val);
+				if (width === 0) {
+					return (src >= 0 ? valN : "-" + valN);
 				}
-				if (val.length + (src >= 0 ? 0 : 1) >= width) {
-					return (src >= 0 ? val : "-" + val);
+				if (valN.length + (src >= 0 ? 0 : 1) >= width) {
+					return (src >= 0 ? valN : "-" + valN);
 				}
 
 				if (src >= 0) {
 					if (flag.indexOf("-") >= 0) {
 						if (flag.indexOf("+") >= 0) {
-							return "+" + val
-									+ genpad(" ", width - val.length - 1);
+							return "+" + valN
+									+ genpad(" ", width - valN.length - 1);
 						} else if (flag.indexOf(" ") >= 0) {
-							return " " + val
-									+ genpad(" ", width - val.length - 1);
+							return " " + valN
+									+ genpad(" ", width - valN.length - 1);
 						} else {
-							return val + genpad(" ", width - val.length);
+							return valN + genpad(" ", width - valN.length);
 						}
 					} else if (flag.indexOf("0") >= 0) {
 						if (flag.indexOf("+") >= 0) {
-							return "+" + genpad("0", width - val.length - 1)
-									+ val;
+							return "+" + genpad("0", width - valN.length - 1)
+									+ valN;
 						} else if (flag.indexOf(" ") >= 0) {
-							return " " + genpad("0", width - val.length - 1)
-									+ val;
+							return " " + genpad("0", width - valN.length - 1)
+									+ valN;
 						} else {
-							return genpad("0", width - val.length) + val;
+							return genpad("0", width - valN.length) + valN;
 						}
 					} else {
 						if (flag.indexOf("+") >= 0) {
-							return genpad(" ", width - val.length - 1) + "+"
-									+ val;
+							return genpad(" ", width - valN.length - 1) + "+"
+									+ valN;
 						} else if (flag.indexOf(" ") >= 0) {
-							return genpad(" ", width - val.length) + val;
+							return genpad(" ", width - valN.length) + valN;
 						} else {
-							return genpad(" ", width - val.length) + val;
+							return genpad(" ", width - valN.length) + valN;
 						}
 					}
 				} else {
 					if (flag.indexOf("-") >= 0) {
-						return "-" + val + genpad(" ", width - val.length - 1);
+						return "-" + valN
+								+ genpad(" ", width - valN.length - 1);
 					} else if (flag.indexOf("0") >= 0) {
-						return "-" + genpad("0", width - val.length - 1) + val;
+						return "-" + genpad("0", width - valN.length - 1)
+								+ valN;
 					} else {
-						return genpad(" ", width - val.length - 1) + "-" + val;
+						return genpad(" ", width - valN.length - 1) + "-"
+								+ valN;
 					}
 				}
 			});
