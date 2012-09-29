@@ -42,19 +42,19 @@ function sprintf(template) {
 					return "%";
 				}
 
-				var width = (widthS == undefined ? undefined : Number(widthS));
-				var prec = (precS == undefined ? undefined : Number(precS));
+				var width = (widthS == undefined ? 0 : Number(widthS));
+				var prec = (precS == undefined ? 0 : Number(precS));
 
 				var src = sprintf.arguments[index++];
 				if (type == "s") {
 
 					var val = src.toString();
 
-					if (prec != undefined && val.length > prec) {
+					if (prec != 0 && val.length > prec) {
 						val = val.substring(0, prec);
 					}
 
-					if (width == undefined) {
+					if (width == 0) {
 						return val;
 					}
 					if (val.length >= width) {
@@ -77,7 +77,7 @@ function sprintf(template) {
 				var val;
 				if (type == "d") {
 					val = Math.floor(src >= 0 ? src : -src).toString();
-					if (prec != undefined && val.length < prec) {
+					if (prec != 0 && val.length < prec) {
 						val = genpad("0", prec - val.length) + val;
 					}
 				} else {
@@ -85,7 +85,7 @@ function sprintf(template) {
 					var intVal = Math.floor(absVal);
 					var fracVal = absVal - intVal;
 					val = intVal.toString();
-					if (prec != undefined) {
+					if (prec != 0) {
 						var v = Math.floor(fracVal * Math.pow(10, prec))
 								.toString();
 						val = val + "." + genpad("0", prec - v.length) + v;
@@ -99,7 +99,7 @@ function sprintf(template) {
 					}
 				}
 
-				if (width == undefined) {
+				if (width == 0) {
 					return (src >= 0 ? val : "-" + val);
 				}
 				if (val.length + (src >= 0 ? 0 : 1) >= width) {
