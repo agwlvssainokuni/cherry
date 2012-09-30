@@ -18,7 +18,7 @@
  * 整数値をコンマ区切りで整形 (文字列化) する。
  *
  * @param {Number}
- *            整形する整数値。
+ *            num 整形する整数値。
  * @returns {String} 数値のカンマ区切り文字列。
  */
 function numfmt(num) {
