@@ -1,5 +1,4 @@
-<?xml version="1.0" standalone="yes" ?>
-<!--
+/*
  *   Copyright 2012 Norio Agawa
  *
  *   Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,11 +12,20 @@
  *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
--->
-<package>
-	<job id="runtest">
-		<script language="JScript" src="wsftestrunner.js" />
-		<script language="JScript" src="../../main/js/sprintf.js" />
-		<script language="JScript" src="sprintf.js" />
-	</job>
-</package>
+ */
+
+function test(desc, func) {
+	WScript.Echo("------------------------------------------------");
+	WScript.Echo(desc);
+	func();
+}
+
+function equal(result, expected, desc) {
+	if (result == expected) {
+		WScript.Echo("    OK: " + desc);
+	} else {
+		WScript.Echo("    NG: " + desc);
+		WScript.Echo("        Expected: " + expected);
+		WScript.Echo("        Result:   " + result);
+	}
+}
