@@ -26,7 +26,7 @@ public class SqlUtil {
 
 	/** SQL文の切出しで使用する解析状態値. */
 	enum State {
-		DEFAULT, QUOTEED, HYPHEN, COMMENT
+		DEFAULT, QUOTED, HYPHEN, COMMENT
 	}
 
 	/**
@@ -45,7 +45,7 @@ public class SqlUtil {
 		int ch;
 		State state = State.DEFAULT;
 		while ((ch = reader.read()) >= 0) {
-			if (state == State.QUOTEED) {
+			if (state == State.QUOTED) {
 				if (ch == (int) '\'') {
 					state = State.DEFAULT;
 				}
@@ -69,7 +69,7 @@ public class SqlUtil {
 				if (ch == (int) ';') {
 					break;
 				} else if (ch == (int) '\'') {
-					state = State.QUOTEED;
+					state = State.QUOTED;
 					builder.append((char) ch);
 				} else if (ch == (int) '-') {
 					state = State.HYPHEN;
