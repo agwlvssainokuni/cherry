@@ -438,8 +438,10 @@ IpAddr.getMask = function(size, length) {
 	// return = 1 1 1 1 ... 1 1 1 1 0 0 0 0 ... 0 0 0 0
 
 	var unit = 32;
-	var base = 0x100000000;
-	var base1 = 0x80000000;
+	var base = 1;
+	for ( var j = 0; j < unit; j++) {
+		base = base * 2;
+	}
 
 	var width = Math.floor(size / unit);
 	var div = Math.floor(length / unit);
@@ -451,7 +453,10 @@ IpAddr.getMask = function(size, length) {
 		result.push(base - 1);
 	}
 	if (mod !== 0) {
-		var mask = (base1 >>> (mod - 1));
+		var mask = 1;
+		for ( var j = 0; j < unit - mod; j++) {
+			mask = mask * 2;
+		}
 		result.push(base - mask);
 		i++;
 	}
