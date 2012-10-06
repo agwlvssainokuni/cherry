@@ -821,3 +821,60 @@ test("IpAddr.V6.compress, 後IPv4中省略", function() {
 	equal(IpAddr("4:4:4:4::4:4.4.4.4").compress(), "4:4:4:4:0:4:4.4.4.4",
 			"4:4:4:4::4:4.4.4.4");
 });
+
+test("IpAddr.V4.getMask", function() {
+
+	var check = function(length, expected) {
+		equal(IpAddr.V4.getMask(length), expected, String(length));
+	};
+
+	check(33, 0xffffffff);
+	check(32, 0xffffffff);
+	check(24, 0xffffff00);
+	check(16, 0xffff0000);
+	check(8, 0xff000000);
+	check(7, 0xfe000000);
+	check(6, 0xfc000000);
+	check(5, 0xf8000000);
+	check(4, 0xf0000000);
+	check(3, 0xe0000000);
+	check(2, 0xc0000000);
+	check(1, 0x80000000);
+	check(0, 0x00000000);
+	check(-1, 0x00000000);
+});
+
+test("IpAddr.V6.getMask", function() {
+
+	var check = function(length, expected0, expected1, expected2, expected3) {
+		var mask = IpAddr.V6.getMask(length);
+		equal(mask.length, 4, String(length) + "#length");
+		equal(mask[0], expected0, String(length) + "#[0]");
+		equal(mask[1], expected1, String(length) + "#[1]");
+		equal(mask[2], expected2, String(length) + "#[2]");
+		equal(mask[3], expected3, String(length) + "#[3]");
+	};
+
+	check(129, 0xffffffff, 0xffffffff, 0xffffffff, 0xffffffff);
+	check(128, 0xffffffff, 0xffffffff, 0xffffffff, 0xffffffff);
+	check(112, 0xffffffff, 0xffffffff, 0xffffffff, 0xffff0000);
+	check(97, 0xffffffff, 0xffffffff, 0xffffffff, 0x80000000);
+	check(96, 0xffffffff, 0xffffffff, 0xffffffff, 0x00000000);
+	check(80, 0xffffffff, 0xffffffff, 0xffff0000, 0x00000000);
+	check(65, 0xffffffff, 0xffffffff, 0x80000000, 0x00000000);
+	check(64, 0xffffffff, 0xffffffff, 0x00000000, 0x00000000);
+	check(48, 0xffffffff, 0xffff0000, 0x00000000, 0x00000000);
+	check(33, 0xffffffff, 0x80000000, 0x00000000, 0x00000000);
+	check(32, 0xffffffff, 0x00000000, 0x00000000, 0x00000000);
+	check(16, 0xffff0000, 0x00000000, 0x00000000, 0x00000000);
+	check(8, 0xff000000, 0x00000000, 0x00000000, 0x00000000);
+	check(7, 0xfe000000, 0x00000000, 0x00000000, 0x00000000);
+	check(6, 0xfc000000, 0x00000000, 0x00000000, 0x00000000);
+	check(5, 0xf8000000, 0x00000000, 0x00000000, 0x00000000);
+	check(4, 0xf0000000, 0x00000000, 0x00000000, 0x00000000);
+	check(3, 0xe0000000, 0x00000000, 0x00000000, 0x00000000);
+	check(2, 0xc0000000, 0x00000000, 0x00000000, 0x00000000);
+	check(1, 0x80000000, 0x00000000, 0x00000000, 0x00000000);
+	check(0, 0x00000000, 0x00000000, 0x00000000, 0x00000000);
+	check(-1, 0x00000000, 0x00000000, 0x00000000, 0x00000000);
+});

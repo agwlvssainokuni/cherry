@@ -377,7 +377,7 @@ IpAddr.V6.prototype = {
 	/**
 	 * IPアドレスの数値表現を取得する。
 	 *
-	 * @returns {Number} IPアドレスの数値表現。
+	 * @returns {Array} IPアドレスの数値表現。
 	 */
 	toNumber : function() {
 
@@ -425,7 +425,7 @@ IpAddr.V6.prototype = {
  *            size IPアドレスのサイズ。
  * @param {Number}
  *            length プレフィクス長。
- * @returns {Number} ビットマスクの数値表現。
+ * @returns {Array} ビットマスクの数値表現。
  */
 IpAddr.getMask = function(size, length) {
 	// [考え方]
@@ -436,9 +436,30 @@ IpAddr.getMask = function(size, length) {
 	// mask = . . . . . . . . . . 1 0 0 0 0 ... 0 0 0 0
 	// --------+-------------------+--------------------
 	// return = 1 1 1 1 ... 1 1 1 1 0 0 0 0 ... 0 0 0 0
-	var base = (1 << size);
-	var mask = (1 << (size - length));
-	return base - mask;
+
+	var unit = 32;
+	var base = 0x100000000;
+	var base1 = 0x80000000;
+
+	var width = Math.floor(size / unit);
+	var div = Math.floor(length / unit);
+	var mod = length % unit;
+
+	var result = [];
+	var i = 0;
+	for (; i < div; i++) {
+		result.push(base - 1);
+	}
+	if (mod !== 0) {
+		var mask = (base1 >>> (mod - 1));
+		result.push(base - mask);
+		i++;
+	}
+	for (; i < width; i++) {
+		result.push(0);
+	}
+
+	return result;
 };
 
 /**
@@ -451,12 +472,12 @@ IpAddr.getMask = function(size, length) {
  */
 IpAddr.V4.getMask = function(maskLength) {
 	if (maskLength > 32) {
-		return IpAddr.getMask(32, 32);
+		return IpAddr.getMask(32, 32)[0];
 	}
 	if (maskLength < 0) {
-		return IpAddr.getMask(32, 0);
+		return IpAddr.getMask(32, 0)[0];
 	}
-	return IpAddr.getMask(32, maskLength);
+	return IpAddr.getMask(32, maskLength)[0];
 };
 
 /**
@@ -465,7 +486,7 @@ IpAddr.V4.getMask = function(maskLength) {
  *
  * @param {Number}
  *            prefixLength プレフィクス長。0から128の範囲で指定する。
- * @returns {Number} IPv6アドレスのプレフィクスマスクの数値表現。
+ * @returns {Array} IPv6アドレスのプレフィクスマスクの数値表現。
  */
 IpAddr.V6.getMask = function(prefixLength) {
 	if (prefixLength > 128) {
