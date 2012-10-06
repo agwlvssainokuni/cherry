@@ -123,9 +123,21 @@ IpAddr.V4 = function(addr) {
 };
 
 IpAddr.V4.prototype = {
+
+	/**
+	 * IPアドレスのバージョン。
+	 *
+	 * @returns {String} バージョン ("IPv4"固定)。
+	 */
 	version : function() {
 		return "IPv4";
 	},
+
+	/**
+	 * IPアドレスの数値表現を取得する。
+	 *
+	 * @returns {Number} IPアドレスの数値表現。
+	 */
 	toNumber : function() {
 		var octet = this.addr.split(".");
 		var result = 0;
@@ -134,9 +146,16 @@ IpAddr.V4.prototype = {
 		}
 		return result;
 	},
+
+	/**
+	 * IPアドレスの文字列表現を取得する。
+	 *
+	 * @returns {Number} IPアドレスの文字列表現。
+	 */
 	toString : function() {
 		return this.addr;
 	}
+
 };
 
 /**
@@ -156,15 +175,15 @@ IpAddr.V6 = function(addr) {
 			result.push(prefix[i]);
 		}
 		for ( var i = prefix.length; i < size - suffix.length; i++) {
-			result[i].push(null);
+			result.push(null);
 		}
 		for ( var i = size - suffix.length; i < size; i++) {
-			result[i].push(suffix[i - (size - suffix.length)]);
+			result.push(suffix[i - (size - suffix.length)]);
 		}
 		return result;
 	};
 
-	if (addr.match(/^.*:[0-9]{1,3}(\\.[0-9]{1,3}){3}$/)) {
+	if (addr.match(/^.*:[0-9]{1,3}(\.[0-9]{1,3}){3}$/)) {
 
 		var colon = addr.lastIndexOf(":");
 		this.v4 = addr.substring(colon + 1);
@@ -172,12 +191,12 @@ IpAddr.V6 = function(addr) {
 		var addrv6 = addr.substring(0, colon);
 		if (addrv6 == ":") {
 			this.v6 = padding(6, [], []);
-		} else if (addrv6.startsWith("::")) {
+		} else if (addrv6.match(/^::/)) {
 			this.v6 = padding(6, [], addrv6.substring(2).split(":"));
-		} else if (addrv6.endsWith(":")) {
-			this.v6 = padding(6, addrv6.substring(0, addrv6.length() - 1)
-					.split(":"), []);
-		} else if (addrv6.indexOf("::") >= 0) {
+		} else if (addrv6.match(/:$/)) {
+			this.v6 = padding(6, addrv6.substring(0, addrv6.length - 1).split(
+					":"), []);
+		} else if (addrv6.match(/::/)) {
 			var part = addrv6.split("::");
 			this.v6 = padding(6, part[0].split(":"), part[1].split(":"));
 		} else {
@@ -190,12 +209,12 @@ IpAddr.V6 = function(addr) {
 		var addrv6 = addr;
 		if (addrv6 == "::") {
 			this.v6 = padding(8, [], []);
-		} else if (addrv6.startsWith("::")) {
+		} else if (addrv6.match(/^::/)) {
 			this.v6 = padding(8, [], addrv6.substring(2).split(":"));
-		} else if (addrv6.endsWith("::")) {
-			this.v6 = padding(8, addrv6.substring(0, addrv6.length() - 2)
-					.split(":"), []);
-		} else if (addrv6.indexOf("::") >= 0) {
+		} else if (addrv6.match(/::$/)) {
+			this.v6 = padding(8, addrv6.substring(0, addrv6.length - 2).split(
+					":"), []);
+		} else if (addrv6.match(/::/)) {
 			var part = addrv6.split("::");
 			this.v6 = padding(8, part[0].split(":"), part[1].split(":"));
 		} else {
@@ -205,15 +224,161 @@ IpAddr.V6 = function(addr) {
 };
 
 IpAddr.V6.prototype = {
+
+	/**
+	 * IPアドレスのバージョン。
+	 *
+	 * @returns {String} バージョン ("IPv6"固定)。
+	 */
 	version : function() {
 		return "IPv6";
 	},
+
+	/**
+	 * IPアドレスの圧縮表現を取得する。
+	 *
+	 * @returns {String} IPアドレスの圧縮表現。
+	 */
 	compress : function() {
 
+		var adjust = function(text) {
+			if (text === null) {
+				return "0";
+			} else if (text.match(/^0+$/)) {
+				return "0";
+			} else {
+				var index = 0;
+				for (; index < text.length; index++) {
+					if (text.charAt(index) != "0") {
+						break;
+					}
+				}
+				var val = "";
+				for (; index < text.length; index++) {
+					val = val + text.charAt(index);
+				}
+				return val;
+			}
+		};
+
+		var curBegin = -1;
+		var curEnd = -1;
+		var range = {
+			begin : 0,
+			end : 0
+		};
+
+		for ( var i = 0; i < this.v6.length; i++) {
+
+			if (this.v6[i] && !this.v6[i].match(/^0+$/)) {
+				curBegin = -1;
+				curEnd = -1;
+				continue;
+			}
+
+			if (curBegin < 0) {
+				curBegin = i;
+				curEnd = i;
+			} else {
+				curEnd = i;
+			}
+
+			if (range.begin < 0) {
+				range.begin = curBegin;
+				range.end = curEnd;
+			} else {
+				if (range.end - range.begin < curEnd - curBegin) {
+					range.begin = curBegin;
+					range.end = curEnd;
+				}
+			}
+		}
+
+		var result = "";
+
+		if ((range.begin == -1) || (range.begin == range.end)) {
+			// 省略なし
+			result = adjust(this.v6[0]);
+			for ( var i = 1; i < this.v6.length; i++) {
+				result = result + ":" + adjust(this.v6[i]);
+			}
+		} else if (range.begin == 0) {
+			if (range.end == this.v6.length - 1) {
+				// 全省略
+				result = "::";
+			} else {
+				// 前省略
+				result = ":";
+				for ( var i = range.end + 1; i < this.v6.length; i++) {
+					result = result + ":" + adjust(this.v6[i]);
+				}
+			}
+		} else {
+			if (range.end == this.v6.length - 1) {
+				// 後省略
+				result = "";
+				for ( var i = 0; i < range.begin; i++) {
+					result = result + adjust(this.v6[i]) + ":";
+				}
+				result = result + ":";
+			} else {
+				// 中省略
+				result = "";
+				for ( var i = 0; i < range.begin; i++) {
+					result = result + adjust(this.v6[i]) + ":";
+				}
+				for ( var i = range.end + 1; i < this.v6.length; i++) {
+					result = result + ":" + adjust(this.v6[i]);
+				}
+			}
+		}
+
+		if (this.v4) {
+			if (!result.match(/:$/)) {
+				result = result + ":";
+			}
+			result = result + this.v4;
+		}
+
+		return result;
 	},
+
+	/**
+	 * IPアドレスの展開表現を取得する。
+	 *
+	 * @returns {String} IPアドレスの展開表現。
+	 */
 	decompress : function() {
 
+		var adjust = function(text) {
+			if (text === null) {
+				return "0000";
+			} else {
+				var val = "";
+				for ( var i = text.length; i < 4; i++) {
+					val = val + "0";
+				}
+				return val + text;
+			}
+		};
+
+		var result = adjust(this.v6[0]);
+		for ( var i = 1; i < this.v6.length; i++) {
+			result = result + ":" + adjust(this.v6[i]);
+		}
+
+		if (this.v4) {
+			result = result + ":" + this.v4;
+		}
+
+		return result;
 	},
+
+	/**
+	 * IPアドレスの数値表現を取得する。
+	 *
+	 * @returns {Number} IPアドレスの数値表現。
+	 */
 	toNumber : function() {
 		var result = 0;
 		for ( var i = 0; i < this.v6.length; i++) {
@@ -228,9 +393,16 @@ IpAddr.V6.prototype = {
 		}
 		return result;
 	},
+
+	/**
+	 * IPアドレスの文字列表現を取得する。
+	 *
+	 * @returns {Number} IPアドレスの文字列表現。
+	 */
 	toString : function() {
 		return this.addr;
 	}
+
 };
 
 /**
