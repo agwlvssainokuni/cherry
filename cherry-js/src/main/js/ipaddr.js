@@ -26,7 +26,7 @@ function IpAddr(addr) {
 		return undefined;
 	}
 	if (RegExp(IpAddr.IPV4_PATTERN, "i").test(addr)) {
-		return new IpAddr.V4(addrS);
+		return new IpAddr.V4(addr);
 	}
 	if (RegExp(IpAddr.IPV6_PATTERN, "i").test(addr)) {
 		return new IpAddr.V6(addr);
@@ -142,7 +142,7 @@ IpAddr.V4.prototype = {
 		var octet = this.addr.split(".");
 		var result = 0;
 		for ( var i = 0; i < octet.length; i++) {
-			result = result + 0x100 * Number(octet[i]);
+			result = 0x100 * result + Number(octet[i], 10);
 		}
 		return result;
 	},
@@ -170,7 +170,7 @@ IpAddr.V6 = function(addr) {
 	this.addr = addr;
 
 	var padding = function(size, prefix, suffix) {
-		var result = new Array();
+		var result = [];
 		for ( var i = 0; i < prefix.length; i++) {
 			result.push(prefix[i]);
 		}
@@ -264,8 +264,8 @@ IpAddr.V6.prototype = {
 		var curBegin = -1;
 		var curEnd = -1;
 		var range = {
-			begin : 0,
-			end : 0
+			begin : -1,
+			end : -1
 		};
 
 		for ( var i = 0; i < this.v6.length; i++) {
@@ -380,17 +380,29 @@ IpAddr.V6.prototype = {
 	 * @returns {Number} IPアドレスの数値表現。
 	 */
 	toNumber : function() {
-		var result = 0;
-		for ( var i = 0; i < this.v6.length; i++) {
-			result = result + 0x10000
-					* (this.v6[i] === null ? 0 : Number(this.v6[i], 16));
-		}
-		if (this.v4) {
-			var octet = this.v4.split(".");
-			for ( var i = 0; i < octet.length; i++) {
-				result = result + 0x100 * Number(octet[i]);
+
+		var result = [];
+
+		for ( var i = 0; i < this.v6.length; i += 2) {
+			var val = 0;
+			for ( var j = 0; j < 2; j++) {
+				val = 0x10000 * val;
+				if (this.v6[i + j] !== null) {
+					val += Number(this.v6[i + j], 16);
+				}
 			}
+			result.push(val);
 		}
+
+		if (this.v4) {
+			var val = 0;
+			var octet = this.v4.split(".");
+			for ( var j = 0; j < octet.length; j++) {
+				val = 0x100 * val + Number(octet[j], 10);
+			}
+			result.push(val);
+		}
+
 		return result;
 	},
 

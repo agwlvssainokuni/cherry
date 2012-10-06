@@ -14,6 +14,41 @@
  *   limitations under the License.
  */
 
+test("IpAddr", function() {
+	equal(IpAddr(), undefined, "undefined");
+	equal(IpAddr(""), undefined, "''");
+	equal(IpAddr(1234), undefined, "undefined");
+	equal(IpAddr("NONE"), undefined, "NONE");
+	equal(IpAddr("127.0.0.1").version(), "IPv4", "127.0.0.1");
+	equal(IpAddr("::1").version(), "IPv6", "::1");
+});
+
+test("IpAddr.V4, toString, toNumber", function() {
+	equal(IpAddr("127.0.0.1").toString(), "127.0.0.1", "127.0.0.1#toString");
+	equal(IpAddr("127.0.0.1").toNumber(), 0x7F000001, "127.0.0.1#toNumber");
+});
+
+test("IpAddr.V6, toString, toNumber", function() {
+
+	equal(IpAddr("1:2:3:4:5:6:7:8").toString(), "1:2:3:4:5:6:7:8",
+			"1:2:3:4:5:6:7:8#toString");
+	var num = IpAddr("1:2:3:4:5:6:7:8").toNumber();
+	equal(num.length, 4, "1:2:3:4:5:6:7:8#toNumber.length");
+	equal(num[0], 0x00010002, "1:2:3:4:5:6:7:8#toNumber[0]");
+	equal(num[1], 0x00030004, "1:2:3:4:5:6:7:8#toNumber[1]");
+	equal(num[2], 0x00050006, "1:2:3:4:5:6:7:8#toNumber[2]");
+	equal(num[3], 0x00070008, "1:2:3:4:5:6:7:8#toNumber[3]");
+
+	equal(IpAddr("1:2:3:4:5:6:127.0.0.1").toString(), "1:2:3:4:5:6:127.0.0.1",
+			"1:2:3:4:5:6:127.0.0.1#toString");
+	var num = IpAddr("1:2:3:4:5:6:127.0.0.1").toNumber();
+	equal(num.length, 4, "1:2:3:4:5:6:127.0.0.1#toNumber.length");
+	equal(num[0], 0x00010002, "1:2:3:4:5:6:127.0.0.1#toNumber[0]");
+	equal(num[1], 0x00030004, "1:2:3:4:5:6:127.0.0.1#toNumber[1]");
+	equal(num[2], 0x00050006, "1:2:3:4:5:6:127.0.0.1#toNumber[2]");
+	equal(num[3], 0x7F000001, "1:2:3:4:5:6:127.0.0.1#toNumber[3]");
+});
+
 test("IpAddr.isIpv4Addr", function() {
 
 	var check = function(addr, expected) {
