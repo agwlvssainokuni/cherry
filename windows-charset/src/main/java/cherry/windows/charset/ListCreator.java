@@ -38,34 +38,48 @@ public class ListCreator {
 		Charset cp943 = Charset.forName("CP943");
 		Charset win31j = Charset.forName("Windows-31J");
 
-		System.out.println("WIN\tMS932\tCP943\tWin31J\tCOMMENT");
+		System.out
+				.println("WIN\tUNI\tMS932(1)\tMS932(2)\tCP943(1)\tCP943(2)\tWin31J(1)\tWin31J(2)\tCOMMENT");
 
 		List<Entry> list = tableParser.parse("CP932.TXT");
 		for (Entry entry : list) {
 
 			System.out.print(entry.getWinCode());
 			System.out.print("\t");
+			System.out.print(entry.getUniCode());
+			System.out.print("\t");
 
 			BigInteger winCode = new BigInteger(entry.getWinCode(), 16);
 
-			BigInteger bi932 = new BigInteger((new String(
+			BigInteger bi932x1 = new BigInteger((new String(
 					winCode.toByteArray(), ms932)).getBytes(ms932));
-			System.out.print(winCode.equals(bi932));
+			BigInteger bi932x2 = new BigInteger((new String(
+					bi932x1.toByteArray(), ms932)).getBytes(ms932));
+			System.out.print(winCode.equals(bi932x1));
+			System.out.print("\t");
+			System.out.print(bi932x1.equals(bi932x2));
 			System.out.print("\t");
 
-			BigInteger bi943 = new BigInteger((new String(
+			BigInteger bi943x1 = new BigInteger((new String(
 					winCode.toByteArray(), cp943)).getBytes(cp943));
-			System.out.print(winCode.equals(bi943));
+			BigInteger bi943x2 = new BigInteger((new String(
+					bi943x1.toByteArray(), cp943)).getBytes(cp943));
+			System.out.print(winCode.equals(bi943x1));
+			System.out.print("\t");
+			System.out.print(bi943x1.equals(bi943x2));
 			System.out.print("\t");
 
-			BigInteger bi31j = new BigInteger((new String(
+			BigInteger bi31jx1 = new BigInteger((new String(
 					winCode.toByteArray(), win31j)).getBytes(win31j));
-			System.out.print(winCode.equals(bi31j));
+			BigInteger bi31jx2 = new BigInteger((new String(
+					bi31jx1.toByteArray(), win31j)).getBytes(win31j));
+			System.out.print(winCode.equals(bi31jx1));
+			System.out.print("\t");
+			System.out.print(bi31jx1.equals(bi31jx2));
 			System.out.print("\t");
 
 			System.out.print(entry.getComment());
 			System.out.println();
 		}
 	}
-
 }
