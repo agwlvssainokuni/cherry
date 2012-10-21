@@ -16,6 +16,7 @@
 
 package cherry.util.io;
 
+import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.List;
@@ -33,7 +34,8 @@ public class Sample {
 	 */
 	public static void main(String[] args) throws IOException {
 
-		CsvParser parser = new CsvParser(new FileReader(args[0]));
+		CsvParser parser = new CsvParser(new BufferedReader(new FileReader(
+				args[0])));
 		try {
 			List<String> record;
 			while ((record = parser.read()) != null) {
