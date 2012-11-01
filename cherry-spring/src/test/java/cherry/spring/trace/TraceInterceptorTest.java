@@ -53,7 +53,7 @@ public class TraceInterceptorTest {
 		TraceTest0 impl = getBean(TraceTest0.class);
 
 		// 実行
-		OnMemoryAppender.begin(ILoggingEvent.class);
+		OnMemoryAppender.begin();
 		impl.test0();
 
 		// 検証
@@ -80,7 +80,7 @@ public class TraceInterceptorTest {
 		TraceTest0 impl = getBean(TraceTest0.class);
 
 		// 実行
-		OnMemoryAppender.begin(ILoggingEvent.class);
+		OnMemoryAppender.begin();
 		impl.test1(12345);
 
 		// 検証
@@ -107,7 +107,7 @@ public class TraceInterceptorTest {
 		TraceTest0 impl = getBean(TraceTest0.class);
 
 		// 実行
-		OnMemoryAppender.begin(ILoggingEvent.class);
+		OnMemoryAppender.begin();
 		impl.test2(new int[] { 12345, 67890 });
 
 		// 検証
@@ -136,7 +136,7 @@ public class TraceInterceptorTest {
 		TraceTest0 impl = getBean(TraceTest0.class);
 
 		// 実行
-		OnMemoryAppender.begin(ILoggingEvent.class);
+		OnMemoryAppender.begin();
 		impl.test2(null);
 
 		// 検証
@@ -163,7 +163,7 @@ public class TraceInterceptorTest {
 		TraceTest0 impl = getBean(TraceTest0.class);
 
 		// 実行
-		OnMemoryAppender.begin(ILoggingEvent.class);
+		OnMemoryAppender.begin();
 		impl.test3("12345", "67890");
 
 		// 検証
@@ -191,7 +191,7 @@ public class TraceInterceptorTest {
 		TraceTest0 impl = getBean(TraceTest0.class);
 
 		// 実行
-		OnMemoryAppender.begin(ILoggingEvent.class);
+		OnMemoryAppender.begin();
 		impl.test4("12345", "67890");
 
 		// 検証
@@ -219,7 +219,7 @@ public class TraceInterceptorTest {
 		TraceTest0 impl = getBean(TraceTest0.class);
 
 		// 実行
-		OnMemoryAppender.begin(ILoggingEvent.class);
+		OnMemoryAppender.begin();
 		try {
 			impl.test5();
 		} catch (Exception ex) {
@@ -251,7 +251,7 @@ public class TraceInterceptorTest {
 		TraceTest1 impl = getBean(TraceTest1.class);
 
 		// 実行
-		OnMemoryAppender.begin(ILoggingEvent.class);
+		OnMemoryAppender.begin();
 		impl.test(new int[] { 1, 2, 3, 4, 5 });
 
 		// 検証
@@ -280,7 +280,7 @@ public class TraceInterceptorTest {
 		TraceTest1 impl = getBean(TraceTest1.class);
 
 		// 実行
-		OnMemoryAppender.begin(ILoggingEvent.class);
+		OnMemoryAppender.begin();
 		impl.test(new int[] { 1, 2, 3, 4, 5, 6 });
 
 		// 検証
@@ -309,7 +309,7 @@ public class TraceInterceptorTest {
 		TraceTest1 impl = getBean(TraceTest1.class);
 
 		// 実行
-		OnMemoryAppender.begin(ILoggingEvent.class);
+		OnMemoryAppender.begin();
 		impl.test(new int[] { 11111, 22222, 33333, 44444, 55555 });
 
 		// 検証

@@ -19,21 +19,22 @@ package cherry.spring.trace;
 import java.util.ArrayList;
 import java.util.List;
 
+import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.UnsynchronizedAppenderBase;
 
 /**
  * テスト用ログイベント蓄積機能.
  */
-public class OnMemoryAppender<E> extends UnsynchronizedAppenderBase<E> {
+public class OnMemoryAppender extends UnsynchronizedAppenderBase<ILoggingEvent> {
 
 	/** 蓄積したログイベント. */
-	private static List<?> loggingEvent = null;
+	private static List<ILoggingEvent> loggingEvent = null;
 
 	/**
 	 * 蓄積を開始する.
 	 */
-	public static <T> void begin(Class<T> klass) {
-		loggingEvent = new ArrayList<T>();
+	public static void begin() {
+		loggingEvent = new ArrayList<ILoggingEvent>();
 	}
 
 	/**
@@ -48,10 +49,8 @@ public class OnMemoryAppender<E> extends UnsynchronizedAppenderBase<E> {
 	 *
 	 * @return 蓄積したログイベント
 	 */
-	public static <T> List<T> getEvents() {
-		@SuppressWarnings("unchecked")
-		List<T> list = (List<T>) loggingEvent;
-		return list;
+	public static List<ILoggingEvent> getEvents() {
+		return loggingEvent;
 	}
 
 	/**
@@ -61,11 +60,9 @@ public class OnMemoryAppender<E> extends UnsynchronizedAppenderBase<E> {
 	 *            ログイベント
 	 */
 	@Override
-	protected void append(E event) {
+	protected void append(ILoggingEvent event) {
 		if (loggingEvent != null) {
-			@SuppressWarnings("unchecked")
-			List<E> list = (List<E>) loggingEvent;
-			list.add(event);
+			loggingEvent.add(event);
 		}
 	}
 
