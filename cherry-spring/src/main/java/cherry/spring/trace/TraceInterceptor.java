@@ -21,8 +21,8 @@ import java.lang.reflect.Array;
 
 import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * メソッド呼出のトレースログを出力する機能.
@@ -30,13 +30,14 @@ import org.apache.commons.logging.LogFactory;
 public class TraceInterceptor implements MethodInterceptor {
 
 	/** メソッド開始時のログ出力. */
-	private final Log traceEnter = LogFactory.getLog("trace.ENTER");
+	private final Logger traceEnter = LoggerFactory.getLogger("trace.ENTER");
 
 	/** メソッド終了時のログ出力. */
-	private final Log traceExit = LogFactory.getLog("trace.EXIT");
+	private final Logger traceExit = LoggerFactory.getLogger("trace.EXIT");
 
 	/** 例外発生時のログ出力. */
-	private final Log traceException = LogFactory.getLog("trace.EXCEPTION");
+	private final Logger traceException = LoggerFactory
+			.getLogger("trace.EXCEPTION");
 
 	/** 配列をログ出力する際のサイズ上限. */
 	private int arrayLengthLimit;

@@ -19,22 +19,21 @@ package cherry.spring.trace;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.log4j.AppenderSkeleton;
-import org.apache.log4j.spi.LoggingEvent;
+import ch.qos.logback.core.UnsynchronizedAppenderBase;
 
 /**
  * テスト用ログイベント蓄積機能.
  */
-public class OnMemoryAppender extends AppenderSkeleton {
+public class OnMemoryAppender<E> extends UnsynchronizedAppenderBase<E> {
 
 	/** 蓄積したログイベント. */
-	private static List<LoggingEvent> loggingEvent = null;
+	private static List<?> loggingEvent = null;
 
 	/**
 	 * 蓄積を開始する.
 	 */
-	public static void begin() {
-		loggingEvent = new ArrayList<LoggingEvent>();
+	public static <T> void begin(Class<T> klass) {
+		loggingEvent = new ArrayList<T>();
 	}
 
 	/**
@@ -49,25 +48,10 @@ public class OnMemoryAppender extends AppenderSkeleton {
 	 *
 	 * @return 蓄積したログイベント
 	 */
-	public static List<LoggingEvent> getEvents() {
-		return loggingEvent;
-	}
-
-	/**
-	 * ログ出力を終了する.
-	 */
-	@Override
-	public void close() {
-	}
-
-	/**
-	 * レイアウトが必要か指定する.
-	 *
-	 * @return false固定
-	 */
-	@Override
-	public boolean requiresLayout() {
-		return false;
+	public static <T> List<T> getEvents() {
+		@SuppressWarnings("unchecked")
+		List<T> list = (List<T>) loggingEvent;
+		return list;
 	}
 
 	/**
@@ -77,9 +61,11 @@ public class OnMemoryAppender extends AppenderSkeleton {
 	 *            ログイベント
 	 */
 	@Override
-	protected void append(LoggingEvent event) {
+	protected void append(E event) {
 		if (loggingEvent != null) {
-			loggingEvent.add(event);
+			@SuppressWarnings("unchecked")
+			List<E> list = (List<E>) loggingEvent;
+			list.add(event);
 		}
 	}
 

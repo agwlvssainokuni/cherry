@@ -20,11 +20,12 @@ import static org.junit.Assert.assertEquals;
 
 import java.util.List;
 
-import org.apache.log4j.Level;
-import org.apache.log4j.spi.LoggingEvent;
 import org.junit.Test;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+import ch.qos.logback.classic.Level;
+import ch.qos.logback.classic.spi.ILoggingEvent;
 
 /**
  * {@link TraceInterceptor} のテスト.
@@ -52,20 +53,20 @@ public class TraceInterceptorTest {
 		TraceTest0 impl = getBean(TraceTest0.class);
 
 		// 実行
-		OnMemoryAppender.begin();
+		OnMemoryAppender.begin(ILoggingEvent.class);
 		impl.test0();
 
 		// 検証
-		List<LoggingEvent> event = OnMemoryAppender.getEvents();
+		List<ILoggingEvent> event = OnMemoryAppender.getEvents();
 		OnMemoryAppender.end();
 
 		assertEquals(2, event.size());
-		LoggingEvent e0 = event.get(0);
+		ILoggingEvent e0 = event.get(0);
 		assertEquals(Level.TRACE, e0.getLevel());
 		assertEquals("trace.ENTER", e0.getLoggerName());
 		assertEquals("cherry.spring.trace.TraceTest0Impl#test0: ()",
 				e0.getMessage());
-		LoggingEvent e1 = event.get(1);
+		ILoggingEvent e1 = event.get(1);
 		assertEquals(Level.TRACE, e1.getLevel());
 		assertEquals("trace.EXIT", e1.getLoggerName());
 		assertEquals("cherry.spring.trace.TraceTest0Impl#test0: void",
@@ -79,20 +80,20 @@ public class TraceInterceptorTest {
 		TraceTest0 impl = getBean(TraceTest0.class);
 
 		// 実行
-		OnMemoryAppender.begin();
+		OnMemoryAppender.begin(ILoggingEvent.class);
 		impl.test1(12345);
 
 		// 検証
-		List<LoggingEvent> event = OnMemoryAppender.getEvents();
+		List<ILoggingEvent> event = OnMemoryAppender.getEvents();
 		OnMemoryAppender.end();
 
 		assertEquals(2, event.size());
-		LoggingEvent e0 = event.get(0);
+		ILoggingEvent e0 = event.get(0);
 		assertEquals(Level.TRACE, e0.getLevel());
 		assertEquals("trace.ENTER", e0.getLoggerName());
 		assertEquals("cherry.spring.trace.TraceTest0Impl#test1: (12345)",
 				e0.getMessage());
-		LoggingEvent e1 = event.get(1);
+		ILoggingEvent e1 = event.get(1);
 		assertEquals(Level.TRACE, e1.getLevel());
 		assertEquals("trace.EXIT", e1.getLoggerName());
 		assertEquals("cherry.spring.trace.TraceTest0Impl#test1: 12345",
@@ -106,21 +107,21 @@ public class TraceInterceptorTest {
 		TraceTest0 impl = getBean(TraceTest0.class);
 
 		// 実行
-		OnMemoryAppender.begin();
+		OnMemoryAppender.begin(ILoggingEvent.class);
 		impl.test2(new int[] { 12345, 67890 });
 
 		// 検証
-		List<LoggingEvent> event = OnMemoryAppender.getEvents();
+		List<ILoggingEvent> event = OnMemoryAppender.getEvents();
 		OnMemoryAppender.end();
 
 		assertEquals(2, event.size());
-		LoggingEvent e0 = event.get(0);
+		ILoggingEvent e0 = event.get(0);
 		assertEquals(Level.TRACE, e0.getLevel());
 		assertEquals("trace.ENTER", e0.getLoggerName());
 		assertEquals(
 				"cherry.spring.trace.TraceTest0Impl#test2: ([12345, 67890])",
 				e0.getMessage());
-		LoggingEvent e1 = event.get(1);
+		ILoggingEvent e1 = event.get(1);
 		assertEquals(Level.TRACE, e1.getLevel());
 		assertEquals("trace.EXIT", e1.getLoggerName());
 		assertEquals(
@@ -135,20 +136,20 @@ public class TraceInterceptorTest {
 		TraceTest0 impl = getBean(TraceTest0.class);
 
 		// 実行
-		OnMemoryAppender.begin();
+		OnMemoryAppender.begin(ILoggingEvent.class);
 		impl.test2(null);
 
 		// 検証
-		List<LoggingEvent> event = OnMemoryAppender.getEvents();
+		List<ILoggingEvent> event = OnMemoryAppender.getEvents();
 		OnMemoryAppender.end();
 
 		assertEquals(2, event.size());
-		LoggingEvent e0 = event.get(0);
+		ILoggingEvent e0 = event.get(0);
 		assertEquals(Level.TRACE, e0.getLevel());
 		assertEquals("trace.ENTER", e0.getLoggerName());
 		assertEquals("cherry.spring.trace.TraceTest0Impl#test2: (<null>)",
 				e0.getMessage());
-		LoggingEvent e1 = event.get(1);
+		ILoggingEvent e1 = event.get(1);
 		assertEquals(Level.TRACE, e1.getLevel());
 		assertEquals("trace.EXIT", e1.getLoggerName());
 		assertEquals("cherry.spring.trace.TraceTest0Impl#test2: <null>",
@@ -162,21 +163,21 @@ public class TraceInterceptorTest {
 		TraceTest0 impl = getBean(TraceTest0.class);
 
 		// 実行
-		OnMemoryAppender.begin();
+		OnMemoryAppender.begin(ILoggingEvent.class);
 		impl.test3("12345", "67890");
 
 		// 検証
-		List<LoggingEvent> event = OnMemoryAppender.getEvents();
+		List<ILoggingEvent> event = OnMemoryAppender.getEvents();
 		OnMemoryAppender.end();
 
 		assertEquals(2, event.size());
-		LoggingEvent e0 = event.get(0);
+		ILoggingEvent e0 = event.get(0);
 		assertEquals(Level.TRACE, e0.getLevel());
 		assertEquals("trace.ENTER", e0.getLoggerName());
 		assertEquals(
 				"cherry.spring.trace.TraceTest0Impl#test3: (12345, 67890)",
 				e0.getMessage());
-		LoggingEvent e1 = event.get(1);
+		ILoggingEvent e1 = event.get(1);
 		assertEquals(Level.TRACE, e1.getLevel());
 		assertEquals("trace.EXIT", e1.getLoggerName());
 		assertEquals("cherry.spring.trace.TraceTest0Impl#test3: 1234567890",
@@ -190,21 +191,21 @@ public class TraceInterceptorTest {
 		TraceTest0 impl = getBean(TraceTest0.class);
 
 		// 実行
-		OnMemoryAppender.begin();
+		OnMemoryAppender.begin(ILoggingEvent.class);
 		impl.test4("12345", "67890");
 
 		// 検証
-		List<LoggingEvent> event = OnMemoryAppender.getEvents();
+		List<ILoggingEvent> event = OnMemoryAppender.getEvents();
 		OnMemoryAppender.end();
 
 		assertEquals(2, event.size());
-		LoggingEvent e0 = event.get(0);
+		ILoggingEvent e0 = event.get(0);
 		assertEquals(Level.TRACE, e0.getLevel());
 		assertEquals("trace.ENTER", e0.getLoggerName());
 		assertEquals(
 				"cherry.spring.trace.TraceTest0Impl#test4: (12345, <MASKED>)",
 				e0.getMessage());
-		LoggingEvent e1 = event.get(1);
+		ILoggingEvent e1 = event.get(1);
 		assertEquals(Level.TRACE, e1.getLevel());
 		assertEquals("trace.EXIT", e1.getLoggerName());
 		assertEquals("cherry.spring.trace.TraceTest0Impl#test4: <MASKED>",
@@ -218,7 +219,7 @@ public class TraceInterceptorTest {
 		TraceTest0 impl = getBean(TraceTest0.class);
 
 		// 実行
-		OnMemoryAppender.begin();
+		OnMemoryAppender.begin(ILoggingEvent.class);
 		try {
 			impl.test5();
 		} catch (Exception ex) {
@@ -226,16 +227,16 @@ public class TraceInterceptorTest {
 		}
 
 		// 検証
-		List<LoggingEvent> event = OnMemoryAppender.getEvents();
+		List<ILoggingEvent> event = OnMemoryAppender.getEvents();
 		OnMemoryAppender.end();
 
 		assertEquals(2, event.size());
-		LoggingEvent e0 = event.get(0);
+		ILoggingEvent e0 = event.get(0);
 		assertEquals(Level.TRACE, e0.getLevel());
 		assertEquals("trace.ENTER", e0.getLoggerName());
 		assertEquals("cherry.spring.trace.TraceTest0Impl#test5: ()",
 				e0.getMessage());
-		LoggingEvent e1 = event.get(1);
+		ILoggingEvent e1 = event.get(1);
 		assertEquals(Level.TRACE, e1.getLevel());
 		assertEquals("trace.EXCEPTION", e1.getLoggerName());
 		assertEquals(
@@ -250,21 +251,21 @@ public class TraceInterceptorTest {
 		TraceTest1 impl = getBean(TraceTest1.class);
 
 		// 実行
-		OnMemoryAppender.begin();
+		OnMemoryAppender.begin(ILoggingEvent.class);
 		impl.test(new int[] { 1, 2, 3, 4, 5 });
 
 		// 検証
-		List<LoggingEvent> event = OnMemoryAppender.getEvents();
+		List<ILoggingEvent> event = OnMemoryAppender.getEvents();
 		OnMemoryAppender.end();
 
 		assertEquals(2, event.size());
-		LoggingEvent e0 = event.get(0);
+		ILoggingEvent e0 = event.get(0);
 		assertEquals(Level.TRACE, e0.getLevel());
 		assertEquals("trace.ENTER", e0.getLoggerName());
 		assertEquals(
 				"cherry.spring.trace.TraceTest1Impl#test: ([1, 2, 3, 4, 5])",
 				e0.getMessage());
-		LoggingEvent e1 = event.get(1);
+		ILoggingEvent e1 = event.get(1);
 		assertEquals(Level.TRACE, e1.getLevel());
 		assertEquals("trace.EXIT", e1.getLoggerName());
 		assertEquals(
@@ -279,21 +280,21 @@ public class TraceInterceptorTest {
 		TraceTest1 impl = getBean(TraceTest1.class);
 
 		// 実行
-		OnMemoryAppender.begin();
+		OnMemoryAppender.begin(ILoggingEvent.class);
 		impl.test(new int[] { 1, 2, 3, 4, 5, 6 });
 
 		// 検証
-		List<LoggingEvent> event = OnMemoryAppender.getEvents();
+		List<ILoggingEvent> event = OnMemoryAppender.getEvents();
 		OnMemoryAppender.end();
 
 		assertEquals(2, event.size());
-		LoggingEvent e0 = event.get(0);
+		ILoggingEvent e0 = event.get(0);
 		assertEquals(Level.TRACE, e0.getLevel());
 		assertEquals("trace.ENTER", e0.getLoggerName());
 		assertEquals(
 				"cherry.spring.trace.TraceTest1Impl#test: ([array of int size 6])",
 				e0.getMessage());
-		LoggingEvent e1 = event.get(1);
+		ILoggingEvent e1 = event.get(1);
 		assertEquals(Level.TRACE, e1.getLevel());
 		assertEquals("trace.EXIT", e1.getLoggerName());
 		assertEquals(
@@ -308,21 +309,21 @@ public class TraceInterceptorTest {
 		TraceTest1 impl = getBean(TraceTest1.class);
 
 		// 実行
-		OnMemoryAppender.begin();
+		OnMemoryAppender.begin(ILoggingEvent.class);
 		impl.test(new int[] { 11111, 22222, 33333, 44444, 55555 });
 
 		// 検証
-		List<LoggingEvent> event = OnMemoryAppender.getEvents();
+		List<ILoggingEvent> event = OnMemoryAppender.getEvents();
 		OnMemoryAppender.end();
 
 		assertEquals(2, event.size());
-		LoggingEvent e0 = event.get(0);
+		ILoggingEvent e0 = event.get(0);
 		assertEquals(Level.TRACE, e0.getLevel());
 		assertEquals("trace.ENTER", e0.getLoggerName());
 		assertEquals(
 				"cherry.spring.trace.TraceTest1Impl#test: ([11111, 22222, 33333,...<truncated>...)",
 				e0.getMessage());
-		LoggingEvent e1 = event.get(1);
+		ILoggingEvent e1 = event.get(1);
 		assertEquals(Level.TRACE, e1.getLevel());
 		assertEquals("trace.EXIT", e1.getLoggerName());
 		assertEquals(
