@@ -46,6 +46,14 @@
 		<url-pattern>/</url-pattern>
 	</servlet-mapping>
 	<filter>
+		<filter-name>mdcFilter</filter-name>
+		<filter-class>ch.qos.logback.classic.helpers.MDCInsertingServletFilter</filter-class>
+	</filter>
+	<filter-mapping>
+		<filter-name>mdcFilter</filter-name>
+		<servlet-name>app</servlet-name>
+	</filter-mapping>
+	<filter>
 		<filter-name>etagFilter</filter-name>
 		<filter-class>org.springframework.web.filter.ShallowEtagHeaderFilter</filter-class>
 	</filter>
