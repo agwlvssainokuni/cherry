@@ -28,11 +28,6 @@
 		<welcome-file>index.jsp</welcome-file>
 	</welcome-file-list>
 
-	<!-- ログ出力補助設定 -->
-	<listener>
-		<listener-class>cherry.sample.app.servlet.SysPropListener</listener-class>
-	</listener>
-
 	<!-- Springの構成 -->
 	<context-param>
 		<param-name>contextConfigLocation</param-name>
