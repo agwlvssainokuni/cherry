@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+	<appender name="fluent" class="cherry.logback.appender.FluentLoggerAppender">
+		<tag>myapp</tag>
+		<host>127.0.0.1</host>
+		<port>24224</port>
+		<timeout>3000</timeout>
+		<bufferCapacity>1048576</bufferCapacity>
+	</appender>
+	<root level="DEBUG">
+		<appender-ref ref="fluent" />
+	</root>
+</configuration>
