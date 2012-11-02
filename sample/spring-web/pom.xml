@@ -33,6 +33,11 @@
 		</dependency>
 		<dependency>
 			<groupId>cherry</groupId>
+			<artifactId>cherry-logback</artifactId>
+			<version>1.0.0</version>
+		</dependency>
+		<dependency>
+			<groupId>cherry</groupId>
 			<artifactId>cherry-spring</artifactId>
 			<version>1.0.0</version>
 		</dependency>

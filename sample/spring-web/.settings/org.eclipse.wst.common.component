@@ -8,6 +8,9 @@
         <dependent-module archiveName="cherry-util-1.0.0.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/cherry-util/cherry-util">
             <dependency-type>uses</dependency-type>
         </dependent-module>
+        <dependent-module archiveName="cherry-logback-1.0.0.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/cherry-logback/cherry-logback">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
         <dependent-module archiveName="cherry-spring-1.0.0.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/cherry-spring/cherry-spring">
             <dependency-type>uses</dependency-type>
         </dependent-module>
