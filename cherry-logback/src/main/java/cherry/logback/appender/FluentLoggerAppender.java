@@ -66,12 +66,18 @@ public class FluentLoggerAppender extends
 		long timestamp = event.getTimeStamp();
 
 		Map<String, Object> data = new LinkedHashMap<String, Object>();
-		data.put("time", timestamp);
+		data.put("timestamp", timestamp);
 		data.put("level", level.toString());
 		data.put("thread", event.getThreadName());
 		data.put("logger", event.getLoggerName());
-		data.put("mdc", event.getMDCPropertyMap());
 		data.put("message", event.getFormattedMessage());
+
+		Map<String, String> mdc = new LinkedHashMap<String, String>();
+		for (Map.Entry<String, String> entry : event.getMDCPropertyMap()
+				.entrySet()) {
+			mdc.put(entry.getKey().replace(".", "_"), entry.getValue());
+		}
+		data.put("mdc", mdc);
 
 		if (event.getThrowableProxy() != null) {
 			data.put("throwable",

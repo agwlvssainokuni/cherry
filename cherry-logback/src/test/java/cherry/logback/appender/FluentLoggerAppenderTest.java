@@ -18,9 +18,12 @@ package cherry.logback.appender;
 
 import static org.junit.Assert.fail;
 
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.slf4j.MDC;
 
 /**
  * {@link FluentLoggerAppender}のテスト.
@@ -29,6 +32,26 @@ public class FluentLoggerAppenderTest {
 
 	/** ログ出力. */
 	private Logger log = LoggerFactory.getLogger(getClass());
+
+	/**
+	 * テストの前処理.<br>
+	 * MDCに値を格納する。
+	 */
+	@Before
+	public void setUp() {
+		for (int i = 0; i < 5; i++) {
+			MDC.put("KEY." + i, "VALUE" + i);
+		}
+	}
+
+	/**
+	 * テストの後処理.<br>
+	 * MDCの値を消去する。
+	 */
+	@After
+	public void tearDown() {
+		MDC.clear();
+	}
 
 	/**
 	 * 通常ログ出力.
@@ -60,9 +83,24 @@ public class FluentLoggerAppenderTest {
 	 * {@link Throwable}のネストありログ出力.
 	 */
 	@Test
-	public void testCause() {
+	public void testNestedThrowable() {
 		try {
-			Throwable cause = new Throwable("例外のcause");
+			Throwable cause = new Throwable("元の例外");
+			log.error("エラーメッセージ", new Throwable("例外メッセージ", cause));
+		} catch (Exception ex) {
+			ex.printStackTrace();
+			fail("例外が発生してはならない");
+		}
+	}
+
+	/**
+	 * {@link Throwable}のネストありログ出力 (二段ネスト).
+	 */
+	@Test
+	public void testNestedNestedThrowable() {
+		try {
+			Throwable causeOfCause = new Throwable("元の元の例外");
+			Throwable cause = new Throwable("元の例外", causeOfCause);
 			log.error("エラーメッセージ", new Throwable("例外メッセージ", cause));
 		} catch (Exception ex) {
 			ex.printStackTrace();
