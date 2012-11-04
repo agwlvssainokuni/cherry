@@ -50,6 +50,9 @@ public class FluentLoggerAppender extends
 	/** fluentdサーバ通信バッファサイズ. */
 	private Integer bufferCapacity = null;
 
+	/** MDC出力フラグ. */
+	private boolean outputMdc = true;
+
 	/** fluent-logger-java */
 	private FluentLogger fluentLogger = null;
 
@@ -72,12 +75,14 @@ public class FluentLoggerAppender extends
 		data.put("logger", event.getLoggerName());
 		data.put("message", event.getFormattedMessage());
 
-		Map<String, String> mdc = new LinkedHashMap<String, String>();
-		for (Map.Entry<String, String> entry : event.getMDCPropertyMap()
-				.entrySet()) {
-			mdc.put(entry.getKey().replace(".", "_"), entry.getValue());
+		if (outputMdc) {
+			Map<String, String> mdc = new LinkedHashMap<String, String>();
+			for (Map.Entry<String, String> entry : event.getMDCPropertyMap()
+					.entrySet()) {
+				mdc.put(entry.getKey().replace(".", "_"), entry.getValue());
+			}
+			data.put("mdc", mdc);
 		}
-		data.put("mdc", mdc);
 
 		if (event.getThrowableProxy() != null) {
 			data.put("throwable",
@@ -210,6 +215,16 @@ public class FluentLoggerAppender extends
 	 */
 	public void setBufferCapacity(Integer bufferCapacity) {
 		this.bufferCapacity = bufferCapacity;
+	}
+
+	/**
+	 * MDC出力フラグ を設定する.
+	 *
+	 * @param outputMdc
+	 *            MDC出力フラグ
+	 */
+	public void setOutputMdc(boolean outputMdc) {
+		this.outputMdc = outputMdc;
 	}
 
 }

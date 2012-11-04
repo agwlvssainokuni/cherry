@@ -6,6 +6,7 @@
 		<port>24224</port>
 		<timeout>3000</timeout>
 		<bufferCapacity>1048576</bufferCapacity>
+		<outputMdc>true</outputMdc>
 	</appender>
 	<root level="DEBUG">
 		<appender-ref ref="fluent" />
