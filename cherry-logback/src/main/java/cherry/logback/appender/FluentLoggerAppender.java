@@ -163,15 +163,6 @@ public class FluentLoggerAppender extends
 	}
 
 	/**
-	 * fluentdタグ を取得する.
-	 *
-	 * @return fluentdタグ
-	 */
-	public String getTag() {
-		return tag;
-	}
-
-	/**
 	 * fluentdタグ を設定する.
 	 *
 	 * @param tag
@@ -179,15 +170,6 @@ public class FluentLoggerAppender extends
 	 */
 	public void setTag(String tag) {
 		this.tag = tag;
-	}
-
-	/**
-	 * fluentdサーバホスト を取得する.
-	 *
-	 * @return fluentdサーバホスト
-	 */
-	public String getHost() {
-		return host;
 	}
 
 	/**
@@ -201,15 +183,6 @@ public class FluentLoggerAppender extends
 	}
 
 	/**
-	 * fluentdサーバポート を取得する.
-	 *
-	 * @return fluentdサーバポート
-	 */
-	public int getPort() {
-		return port;
-	}
-
-	/**
 	 * fluentdサーバポート を設定する.
 	 *
 	 * @param port
@@ -220,15 +193,6 @@ public class FluentLoggerAppender extends
 	}
 
 	/**
-	 * fluentdサーバ通信タイムアウト を取得する.
-	 *
-	 * @return fluentdサーバ通信タイムアウト
-	 */
-	public Integer getTimeout() {
-		return timeout;
-	}
-
-	/**
 	 * fluentdサーバ通信タイムアウト を設定する.
 	 *
 	 * @param timeout
@@ -236,15 +200,6 @@ public class FluentLoggerAppender extends
 	 */
 	public void setTimeout(Integer timeout) {
 		this.timeout = timeout;
-	}
-
-	/**
-	 * fluentdサーバ通信バッファサイズ を取得する.
-	 *
-	 * @return fluentdサーバ通信バッファサイズ
-	 */
-	public Integer getBufferCapacity() {
-		return bufferCapacity;
 	}
 
 	/**
