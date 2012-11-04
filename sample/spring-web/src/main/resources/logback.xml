@@ -22,10 +22,18 @@
 			<pattern>%d{yyyy-MM-dd-HH:mm:ss.SSS} [%t] %X{req.requestURI} %-5level %logger - %msg%n</pattern>
 		</encoder>
 	</appender>
+	<appender name="fluent" class="cherry.logback.appender.FluentLoggerAppender">
+		<tag>myapp</tag>
+		<host>${fluentd.host}</host>
+		<port>24224</port>
+		<timeout>3000</timeout>
+		<bufferCapacity>1048576</bufferCapacity>
+	</appender>
 	<logger name="cherry.sample.web" level="DEBUG" />
 	<logger name="org.springframework" level="DEBUG" />
 	<logger name="trace" level="TRACE" />
 	<root level="INFO">
 		<appender-ref ref="console" />
+		<!-- <appender-ref ref="fluent" /> -->
 	</root>
 </configuration>
