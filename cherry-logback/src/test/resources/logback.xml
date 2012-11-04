@@ -2,7 +2,7 @@
 <configuration>
 	<appender name="fluent" class="cherry.logback.appender.FluentLoggerAppender">
 		<tag>myapp</tag>
-		<host>127.0.0.1</host>
+		<host>${fluentd.host}</host>
 		<port>24224</port>
 		<timeout>3000</timeout>
 		<bufferCapacity>1048576</bufferCapacity>
