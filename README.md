@@ -20,6 +20,8 @@
    * 数値書式整形 (カンマ区切り)
    * IPアドレス操作 (IPv6, IPv4)
    * 文字列操作拡張 (バイト長、バイト長指定部分文字列)
+* cherry-scala: Scalaユーティリティ
+   * CSVパーサ
 * sample/
    * spring-web: Spring frameworkベース メンバ管理 (実験用WEBアプリ)
 * windows-charset: Windows文字集合変換チェック
