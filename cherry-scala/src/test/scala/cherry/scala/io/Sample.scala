@@ -16,7 +16,8 @@
 
 package cherry.scala.io
 
-import java.io._
+import java.io.BufferedReader
+import java.io.FileReader
 
 /**
  * CSVパーサコマンドライン実行サンプル.

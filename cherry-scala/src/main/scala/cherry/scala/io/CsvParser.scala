@@ -17,8 +17,8 @@
 package cherry.scala.io
 
 import java.io.Reader
+
 import scala.collection.mutable.ArrayBuffer
-import java.io.IOException
 
 /**
  * CSVパーサ.<br>
