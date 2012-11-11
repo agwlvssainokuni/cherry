@@ -89,13 +89,9 @@ class CsvParser(reader: Reader) {
   /**
    * 状態繊維機械においてイベント (文字入力) に対する応答 (「アクション」と遷移先の「状態」) を表す。
    */
-  private class Trans(act: Symbol, sta: State) {
-    val action: Symbol = act
-    val state: State = sta
-  }
-
+  private class Trans(val action: Symbol, val state: State)
   private object Trans {
-    def apply(act: Symbol, sta: State) = new Trans(act, sta)
+    def apply(action: Symbol, state: State) = new Trans(action, state)
   }
 
   /** 状態: RECORD_BEGIN */
