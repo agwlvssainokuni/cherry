@@ -58,19 +58,15 @@ class CsvParser(reader: Reader) {
       if (record.isEmpty) null else record.toArray[String]
     } else {
       val ch = reader.read()
-      val trans = state(ch)
-      trans.action match {
-        case 'APPEND => read_main(trans.state,
+      state(ch) match {
+        case Trans('APPEND, nextState) => read_main(nextState,
           field + ch.toChar,
           record)
-        case 'FLUSH => read_main(trans.state,
+        case Trans('FLUSH, nextState) => read_main(nextState,
           new StringBuilder,
           record + field.toString)
-        case 'NONE => read_main(trans.state,
-          field,
-          record)
-        case 'ERROR => throw new CsvException("Invalid CSV format")
-        case _ => read_main(trans.state,
+        case Trans('ERROR, _) => throw new CsvException("Invalid CSV format")
+        case Trans(_, nextState) => read_main(nextState,
           field,
           record)
       }
@@ -89,10 +85,7 @@ class CsvParser(reader: Reader) {
   /**
    * 状態繊維機械においてイベント (文字入力) に対する応答 (「アクション」と遷移先の「状態」) を表す。
    */
-  private class Trans(val action: Symbol, val state: State)
-  private object Trans {
-    def apply(action: Symbol, state: State) = new Trans(action, state)
-  }
+  private case class Trans(val action: Symbol, val state: State)
 
   /** 状態: RECORD_BEGIN */
   private val RECORD_BEGIN: State =
