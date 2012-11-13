@@ -59,13 +59,13 @@ class CsvParser(reader: Reader) {
     } else {
       val ch = reader.read()
       state(ch) match {
-        case ('ERROR, _) => throw new CsvException("Invalid CSV format")
+        case (Action.ERROR, _) => throw new CsvException("Invalid CSV format")
         case (a, s) => s match {
           case nextState: State => a match {
-            case 'APPEND => read_main(nextState,
+            case Action.APPEND => read_main(nextState,
               field + ch.toChar,
               record)
-            case 'FLUSH => read_main(nextState,
+            case Action.FLUSH => read_main(nextState,
               new StringBuilder,
               record + field.toString)
             case _ => read_main(nextState,
@@ -84,72 +84,79 @@ class CsvParser(reader: Reader) {
   /**
    * 状態遷移機械における「状態」を表す。
    */
-  private type State = Int => (Symbol, Int => _)
+  private type State = Int => (Action.Value, Int => _)
+
+  /**
+   * 状態遷移機械における「アクション」を表す。
+   */
+  private object Action extends Enumeration {
+    val NONE, APPEND, FLUSH, ERROR = Value
+  }
 
   /** 状態: RECORD_BEGIN */
   private val RECORD_BEGIN: State =
     (ch: Int) => ch match {
-      case ',' => ('FLUSH, FIELD_BEGIN)
-      case '"' => ('NONE, ESCAPED)
-      case '\r' => ('FLUSH, CR)
-      case '\n' => ('FLUSH, RECORD_END)
-      case -1 => ('NONE, RECORD_END)
-      case _ => ('APPEND, NONESCAPED)
+      case ',' => (Action.FLUSH, FIELD_BEGIN)
+      case '"' => (Action.NONE, ESCAPED)
+      case '\r' => (Action.FLUSH, CR)
+      case '\n' => (Action.FLUSH, RECORD_END)
+      case -1 => (Action.NONE, RECORD_END)
+      case _ => (Action.APPEND, NONESCAPED)
     }
 
   /** 状態: FIELD_BEGIN */
   private val FIELD_BEGIN: State =
     (ch: Int) => ch match {
-      case ',' => ('FLUSH, FIELD_BEGIN)
-      case '"' => ('NONE, ESCAPED)
-      case '\r' => ('FLUSH, CR)
-      case '\n' => ('FLUSH, RECORD_END)
-      case -1 => ('FLUSH, RECORD_END)
-      case _ => ('APPEND, NONESCAPED)
+      case ',' => (Action.FLUSH, FIELD_BEGIN)
+      case '"' => (Action.NONE, ESCAPED)
+      case '\r' => (Action.FLUSH, CR)
+      case '\n' => (Action.FLUSH, RECORD_END)
+      case -1 => (Action.FLUSH, RECORD_END)
+      case _ => (Action.APPEND, NONESCAPED)
     }
 
   /** 状態: NONESCAPED */
   private val NONESCAPED: State =
     (ch: Int) => ch match {
-      case ',' => ('FLUSH, FIELD_BEGIN)
-      case '"' => ('APPEND, NONESCAPED)
-      case '\r' => ('FLUSH, CR)
-      case '\n' => ('FLUSH, RECORD_END)
-      case -1 => ('FLUSH, RECORD_END)
-      case _ => ('APPEND, NONESCAPED)
+      case ',' => (Action.FLUSH, FIELD_BEGIN)
+      case '"' => (Action.APPEND, NONESCAPED)
+      case '\r' => (Action.FLUSH, CR)
+      case '\n' => (Action.FLUSH, RECORD_END)
+      case -1 => (Action.FLUSH, RECORD_END)
+      case _ => (Action.APPEND, NONESCAPED)
     }
 
   /** 状態: ESCAPED */
   private val ESCAPED: State =
     (ch: Int) => ch match {
-      case ',' => ('APPEND, ESCAPED)
-      case '"' => ('NONE, DQUOTE)
-      case '\r' => ('APPEND, ESCAPED)
-      case '\n' => ('APPEND, ESCAPED)
-      case -1 => ('ERROR, null)
-      case _ => ('APPEND, ESCAPED)
+      case ',' => (Action.APPEND, ESCAPED)
+      case '"' => (Action.NONE, DQUOTE)
+      case '\r' => (Action.APPEND, ESCAPED)
+      case '\n' => (Action.APPEND, ESCAPED)
+      case -1 => (Action.ERROR, null)
+      case _ => (Action.APPEND, ESCAPED)
     }
 
   /** 状態: DQUOTE */
   private val DQUOTE: State =
     (ch: Int) => ch match {
-      case ',' => ('FLUSH, FIELD_BEGIN)
-      case '"' => ('APPEND, ESCAPED)
-      case '\r' => ('FLUSH, CR)
-      case '\n' => ('FLUSH, RECORD_END)
-      case -1 => ('FLUSH, RECORD_END)
-      case _ => ('ERROR, null)
+      case ',' => (Action.FLUSH, FIELD_BEGIN)
+      case '"' => (Action.APPEND, ESCAPED)
+      case '\r' => (Action.FLUSH, CR)
+      case '\n' => (Action.FLUSH, RECORD_END)
+      case -1 => (Action.FLUSH, RECORD_END)
+      case _ => (Action.ERROR, null)
     }
 
   /** 状態: CR */
   private val CR: State =
     (ch: Int) => ch match {
-      case ',' => ('ERROR, null)
-      case '"' => ('ERROR, null)
-      case '\r' => ('NONE, CR)
-      case '\n' => ('NONE, RECORD_END)
-      case -1 => ('NONE, RECORD_END)
-      case _ => ('ERROR, null)
+      case ',' => (Action.ERROR, null)
+      case '"' => (Action.ERROR, null)
+      case '\r' => (Action.NONE, CR)
+      case '\n' => (Action.NONE, RECORD_END)
+      case -1 => (Action.NONE, RECORD_END)
+      case _ => (Action.ERROR, null)
     }
 
   /** 状態: RECORD_END */
