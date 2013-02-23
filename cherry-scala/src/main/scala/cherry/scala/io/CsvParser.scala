@@ -45,30 +45,30 @@ class CsvParser(reader: Reader) {
    *             CSV形式不正。
    */
   def read(): Either[String, Option[Array[String]]] =
-    read_main(RECORD_BEGIN, new StringBuilder, new ArrayBuffer[String])
+    readMain(RecordBeginState, new StringBuilder, new ArrayBuffer[String])
 
   /**
    * CSVレコード読取りの処理本体.
    */
-  private def read_main(state: State,
+  private def readMain(curState: State,
     field: StringBuilder,
     record: ArrayBuffer[String]): Either[String, Option[Array[String]]] = {
-    state match {
-      case RECORD_END =>
+    curState match {
+      case RecordEndState =>
         Right(if (record.isEmpty) None else Some(record.toArray[String]))
       case _ =>
         val ch = reader.read()
-        state(ch) match {
-          case (Action.NONE, Some(nextState: State)) =>
-            read_main(nextState,
+        curState(ch) match {
+          case (Action.NONE, nextState) =>
+            readMain(nextState,
               field,
               record)
-          case (Action.APPEND, Some(nextState: State)) =>
-            read_main(nextState,
+          case (Action.APPEND, nextState) =>
+            readMain(nextState,
               field + ch.toChar,
               record)
-          case (Action.FLUSH, Some(nextState: State)) =>
-            read_main(nextState,
+          case (Action.FLUSH, nextState) =>
+            readMain(nextState,
               new StringBuilder,
               record += field.toString)
           case (_, _) =>
@@ -83,79 +83,94 @@ class CsvParser(reader: Reader) {
   def close() = reader.close()
 
   /**
-   * 状態遷移機械における「状態」を表す。
-   */
-  private type State = Int => Tuple2[Action.Value, Option[_]]
-
-  /**
    * 状態遷移機械における「アクション」を表す。
    */
   private object Action extends Enumeration {
     val NONE, APPEND, FLUSH, ERROR = Value
   }
 
+  /**
+   * 状態遷移機械における「状態」を表す。
+   */
+  private trait State {
+    def apply(ch: Int): (Action.Value, State)
+  }
+
   /** 状態: RECORD_BEGIN */
-  private val RECORD_BEGIN: State = _ match {
-    case ',' => (Action.FLUSH, Some(FIELD_BEGIN))
-    case '"' => (Action.NONE, Some(ESCAPED))
-    case '\r' => (Action.FLUSH, Some(CR))
-    case '\n' => (Action.FLUSH, Some(RECORD_END))
-    case -1 => (Action.NONE, Some(RECORD_END))
-    case _ => (Action.APPEND, Some(NONESCAPED))
+  private object RecordBeginState extends State {
+    def apply(ch: Int) = ch match {
+      case ',' => (Action.FLUSH, FieldBeginState)
+      case '"' => (Action.NONE, EscapedState)
+      case '\r' => (Action.FLUSH, CrState)
+      case '\n' => (Action.FLUSH, RecordEndState)
+      case -1 => (Action.NONE, RecordEndState)
+      case _ => (Action.APPEND, NonEscapedState)
+    }
   }
 
   /** 状態: FIELD_BEGIN */
-  private val FIELD_BEGIN: State = _ match {
-    case ',' => (Action.FLUSH, Some(FIELD_BEGIN))
-    case '"' => (Action.NONE, Some(ESCAPED))
-    case '\r' => (Action.FLUSH, Some(CR))
-    case '\n' => (Action.FLUSH, Some(RECORD_END))
-    case -1 => (Action.FLUSH, Some(RECORD_END))
-    case _ => (Action.APPEND, Some(NONESCAPED))
+  private object FieldBeginState extends State {
+    def apply(ch: Int) = ch match {
+      case ',' => (Action.FLUSH, FieldBeginState)
+      case '"' => (Action.NONE, EscapedState)
+      case '\r' => (Action.FLUSH, CrState)
+      case '\n' => (Action.FLUSH, RecordEndState)
+      case -1 => (Action.FLUSH, RecordEndState)
+      case _ => (Action.APPEND, NonEscapedState)
+    }
   }
 
   /** 状態: NONESCAPED */
-  private val NONESCAPED: State = _ match {
-    case ',' => (Action.FLUSH, Some(FIELD_BEGIN))
-    case '"' => (Action.APPEND, Some(NONESCAPED))
-    case '\r' => (Action.FLUSH, Some(CR))
-    case '\n' => (Action.FLUSH, Some(RECORD_END))
-    case -1 => (Action.FLUSH, Some(RECORD_END))
-    case _ => (Action.APPEND, Some(NONESCAPED))
+  private object NonEscapedState extends State {
+    def apply(ch: Int) = ch match {
+      case ',' => (Action.FLUSH, FieldBeginState)
+      case '"' => (Action.APPEND, NonEscapedState)
+      case '\r' => (Action.FLUSH, CrState)
+      case '\n' => (Action.FLUSH, RecordEndState)
+      case -1 => (Action.FLUSH, RecordEndState)
+      case _ => (Action.APPEND, NonEscapedState)
+    }
   }
 
   /** 状態: ESCAPED */
-  private val ESCAPED: State = _ match {
-    case ',' => (Action.APPEND, Some(ESCAPED))
-    case '"' => (Action.NONE, Some(DQUOTE))
-    case '\r' => (Action.APPEND, Some(ESCAPED))
-    case '\n' => (Action.APPEND, Some(ESCAPED))
-    case -1 => (Action.ERROR, None)
-    case _ => (Action.APPEND, Some(ESCAPED))
+  private object EscapedState extends State {
+    def apply(ch: Int) = ch match {
+      case ',' => (Action.APPEND, EscapedState)
+      case '"' => (Action.NONE, DquoteState)
+      case '\r' => (Action.APPEND, EscapedState)
+      case '\n' => (Action.APPEND, EscapedState)
+      case -1 => (Action.ERROR, null)
+      case _ => (Action.APPEND, EscapedState)
+    }
   }
 
   /** 状態: DQUOTE */
-  private val DQUOTE: State = _ match {
-    case ',' => (Action.FLUSH, Some(FIELD_BEGIN))
-    case '"' => (Action.APPEND, Some(ESCAPED))
-    case '\r' => (Action.FLUSH, Some(CR))
-    case '\n' => (Action.FLUSH, Some(RECORD_END))
-    case -1 => (Action.FLUSH, Some(RECORD_END))
-    case _ => (Action.ERROR, None)
+  private object DquoteState extends State {
+    def apply(ch: Int) = ch match {
+      case ',' => (Action.FLUSH, FieldBeginState)
+      case '"' => (Action.APPEND, EscapedState)
+      case '\r' => (Action.FLUSH, CrState)
+      case '\n' => (Action.FLUSH, RecordEndState)
+      case -1 => (Action.FLUSH, RecordEndState)
+      case _ => (Action.ERROR, null)
+    }
   }
 
   /** 状態: CR */
-  private val CR: State = _ match {
-    case ',' => (Action.ERROR, None)
-    case '"' => (Action.ERROR, None)
-    case '\r' => (Action.NONE, Some(CR))
-    case '\n' => (Action.NONE, Some(RECORD_END))
-    case -1 => (Action.NONE, Some(RECORD_END))
-    case _ => (Action.ERROR, None)
+  private object CrState extends State {
+    def apply(ch: Int) = ch match {
+      case ',' => (Action.ERROR, null)
+      case '"' => (Action.ERROR, null)
+      case '\r' => (Action.NONE, CrState)
+      case '\n' => (Action.NONE, RecordEndState)
+      case -1 => (Action.NONE, RecordEndState)
+      case _ => (Action.ERROR, null)
+    }
   }
 
   /** 状態: RECORD_END */
-  private val RECORD_END: State =
-    (_) => (Action.NONE, None)
+  private object RecordEndState extends State {
+    def apply(ch: Int) = (Action.NONE, null)
+  }
 
 }
