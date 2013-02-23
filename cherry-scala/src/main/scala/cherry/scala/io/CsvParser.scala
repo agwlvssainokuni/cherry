@@ -50,32 +50,34 @@ class CsvParser(reader: Reader) {
   /**
    * CSVレコード読取りの処理本体.
    */
-  private def readMain(curState: State,
+  private def readMain(
+    curState: State,
     field: StringBuilder,
-    record: ArrayBuffer[String]): Either[String, Option[Array[String]]] = {
-    curState match {
-      case RecordEndState =>
-        Right(if (record.isEmpty) None else Some(record.toArray[String]))
-      case _ =>
-        val ch = reader.read()
-        curState(ch) match {
-          case (Action.NONE, nextState) =>
-            readMain(nextState,
-              field,
-              record)
-          case (Action.APPEND, nextState) =>
-            readMain(nextState,
-              field + ch.toChar,
-              record)
-          case (Action.FLUSH, nextState) =>
-            readMain(nextState,
-              new StringBuilder,
-              record += field.toString)
-          case (_, _) =>
-            Left("Invalid CSV format")
-        }
+    record: ArrayBuffer[String]): Either[String, Option[Array[String]]] =
+    if (curState == RecordEndState)
+      Right(if (record.isEmpty) None else Some(record.toArray))
+    else {
+      val ch = reader.read()
+      curState(ch) match {
+        case (Action.NONE, nextState) =>
+          readMain(
+            nextState,
+            field,
+            record)
+        case (Action.APPEND, nextState) =>
+          readMain(
+            nextState,
+            field + ch.toChar,
+            record)
+        case (Action.FLUSH, nextState) =>
+          readMain(
+            nextState,
+            new StringBuilder,
+            record += field.toString)
+        case (_, _) =>
+          Left("Invalid CSV format")
+      }
     }
-  }
 
   /**
    * データ読取り元をクローズする.<br>
