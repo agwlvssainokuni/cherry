@@ -34,8 +34,6 @@ object Sample {
     val parser: CsvParser = new CsvParser(new BufferedReader(new FileReader(args(0))))
     try {
       read_loop(parser)
-    } catch {
-      case ex: CsvParser => println("error: " + ex.getMessage)
     } finally {
       parser.close()
     }
@@ -45,16 +43,18 @@ object Sample {
    * レコード読込みの本体
    */
   def read_loop(parser: CsvParser) {
-    val record: Array[String] = parser.read();
-    if (record != null) {
-      print("<R>")
-      for (field <- record) {
-        print("<F>")
-        print(field)
-        print("</F>")
-      }
-      print("</R>")
-      read_loop(parser)
+    parser.read() match {
+      case Right(Some(record)) =>
+        print("<R>")
+        for (field <- record) {
+          print("<F>")
+          print(field)
+          print("</F>")
+        }
+        print("</R>")
+        read_loop(parser)
+      case Right(None) => Unit
+      case Left(err) => println("error: " + err)
     }
   }
 

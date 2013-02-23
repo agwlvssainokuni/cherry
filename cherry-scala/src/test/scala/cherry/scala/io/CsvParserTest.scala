@@ -35,10 +35,14 @@ class CsvParserTest extends FunSuite {
    * </dl>
    */
   run_parser("CASE001", "") { parser =>
-    val r1 = parser.read()
-    assert(r1 === null)
-    val r2 = parser.read()
-    assert(r2 === null)
+    parser.read() match {
+      case Right(None) => Unit
+      case _ => fail()
+    }
+    parser.read() match {
+      case Right(None) => Unit
+      case _ => fail()
+    }
   }
 
   /**
@@ -51,12 +55,15 @@ class CsvParserTest extends FunSuite {
    * </dl>
    */
   run_parser("CASE002", "\n") { parser =>
-    val r1 = parser.read()
-    assert(r1 != null)
-    assert(r1.length === 1)
-    assert(r1(0) === "")
-    val r2 = parser.read()
-    assert(r2 === null)
+    parser.read() match {
+      case Right(Some(record)) =>
+        assert(record === Array(""))
+      case _ => fail()
+    }
+    parser.read() match {
+      case Right(None) => Unit
+      case _ => fail()
+    }
   }
 
   /**
@@ -69,12 +76,15 @@ class CsvParserTest extends FunSuite {
    * </dl>
    */
   run_parser("CASE003", "\r\n") { parser =>
-    val r1 = parser.read()
-    assert(r1 != null)
-    assert(r1.length === 1)
-    assert(r1(0) === "")
-    val r2 = parser.read()
-    assert(r2 === null)
+    parser.read() match {
+      case Right(Some(record)) =>
+        assert(record === Array(""))
+      case _ => fail()
+    }
+    parser.read() match {
+      case Right(None) => Unit
+      case _ => fail()
+    }
   }
 
   /**
@@ -87,12 +97,15 @@ class CsvParserTest extends FunSuite {
    * </dl>
    */
   run_parser("CASE004", "\r") { parser =>
-    val r1 = parser.read()
-    assert(r1 != null)
-    assert(r1.length === 1)
-    assert(r1(0) === "")
-    val r2 = parser.read()
-    assert(r2 === null)
+    parser.read() match {
+      case Right(Some(record)) =>
+        assert(record === Array(""))
+      case _ => fail()
+    }
+    parser.read() match {
+      case Right(None) => Unit
+      case _ => fail()
+    }
   }
 
   /**
@@ -105,12 +118,15 @@ class CsvParserTest extends FunSuite {
    * </dl>
    */
   run_parser("CASE005", "\r\r") { parser =>
-    val r1 = parser.read()
-    assert(r1 != null)
-    assert(r1.length === 1)
-    assert(r1(0) === "")
-    val r2 = parser.read()
-    assert(r2 === null)
+    parser.read() match {
+      case Right(Some(record)) =>
+        assert(record === Array(""))
+      case _ => fail()
+    }
+    parser.read() match {
+      case Right(None) => Unit
+      case _ => fail()
+    }
   }
 
   /**
@@ -123,12 +139,15 @@ class CsvParserTest extends FunSuite {
    * </dl>
    */
   run_parser("CASE006", "\r\r\n") { parser =>
-    val r1 = parser.read()
-    assert(r1 != null)
-    assert(r1.length === 1)
-    assert(r1(0) === "")
-    val r2 = parser.read()
-    assert(r2 === null)
+    parser.read() match {
+      case Right(Some(record)) =>
+        assert(record === Array(""))
+      case _ => fail()
+    }
+    parser.read() match {
+      case Right(None) => Unit
+      case _ => fail()
+    }
   }
 
   /**
@@ -146,13 +165,15 @@ class CsvParserTest extends FunSuite {
    * </dl>
    */
   run_parser("CASE007", ",") { parser =>
-    val r1 = parser.read()
-    assert(r1 != null)
-    assert(r1.length === 2)
-    assert(r1(0) === "")
-    assert(r1(1) === "")
-    val r2 = parser.read()
-    assert(r2 === null)
+    parser.read() match {
+      case Right(Some(record)) =>
+        assert(record === Array("", ""))
+      case _ => fail()
+    }
+    parser.read() match {
+      case Right(None) => Unit
+      case _ => fail()
+    }
   }
 
   /**
@@ -170,13 +191,15 @@ class CsvParserTest extends FunSuite {
    * </dl>
    */
   run_parser("CASE008", ",\n") { parser =>
-    val r1 = parser.read()
-    assert(r1 != null)
-    assert(r1.length === 2)
-    assert(r1(0) === "")
-    assert(r1(1) === "")
-    val r2 = parser.read()
-    assert(r2 === null)
+    parser.read() match {
+      case Right(Some(record)) =>
+        assert(record === Array("", ""))
+      case _ => fail()
+    }
+    parser.read() match {
+      case Right(None) => Unit
+      case _ => fail()
+    }
   }
 
   /**
@@ -194,13 +217,15 @@ class CsvParserTest extends FunSuite {
    * </dl>
    */
   run_parser("CASE009", ",\r\n") { parser =>
-    val r1 = parser.read()
-    assert(r1 != null)
-    assert(r1.length === 2)
-    assert(r1(0) === "")
-    assert(r1(1) === "")
-    val r2 = parser.read()
-    assert(r2 === null)
+    parser.read() match {
+      case Right(Some(record)) =>
+        assert(record === Array("", ""))
+      case _ => fail()
+    }
+    parser.read() match {
+      case Right(None) => Unit
+      case _ => fail()
+    }
   }
 
   /**
@@ -218,13 +243,15 @@ class CsvParserTest extends FunSuite {
    * </dl>
    */
   run_parser("CASE010", ",\r") { parser =>
-    val r1 = parser.read()
-    assert(r1 != null)
-    assert(r1.length === 2)
-    assert(r1(0) === "")
-    assert(r1(1) === "")
-    val r2 = parser.read()
-    assert(r2 === null)
+    parser.read() match {
+      case Right(Some(record)) =>
+        assert(record === Array("", ""))
+      case _ => fail()
+    }
+    parser.read() match {
+      case Right(None) => Unit
+      case _ => fail()
+    }
   }
 
   /**
@@ -242,13 +269,15 @@ class CsvParserTest extends FunSuite {
    * </dl>
    */
   run_parser("CASE011", ",\r\r") { parser =>
-    val r1 = parser.read()
-    assert(r1 != null)
-    assert(r1.length === 2)
-    assert(r1(0) === "")
-    assert(r1(1) === "")
-    val r2 = parser.read()
-    assert(r2 === null)
+    parser.read() match {
+      case Right(Some(record)) =>
+        assert(record === Array("", ""))
+      case _ => fail()
+    }
+    parser.read() match {
+      case Right(None) => Unit
+      case _ => fail()
+    }
   }
 
   /**
@@ -266,13 +295,15 @@ class CsvParserTest extends FunSuite {
    * </dl>
    */
   run_parser("CASE012", ",\r\r\n") { parser =>
-    val r1 = parser.read()
-    assert(r1 != null)
-    assert(r1.length === 2)
-    assert(r1(0) === "")
-    assert(r1(1) === "")
-    val r2 = parser.read()
-    assert(r2 === null)
+    parser.read() match {
+      case Right(Some(record)) =>
+        assert(record === Array("", ""))
+      case _ => fail()
+    }
+    parser.read() match {
+      case Right(None) => Unit
+      case _ => fail()
+    }
   }
 
   /**
@@ -290,14 +321,15 @@ class CsvParserTest extends FunSuite {
    * </dl>
    */
   run_parser("CASE013", ",,\r\n") { parser =>
-    val r1 = parser.read()
-    assert(r1 != null)
-    assert(r1.length === 3)
-    assert(r1(0) === "")
-    assert(r1(1) === "")
-    assert(r1(2) === "")
-    val r2 = parser.read()
-    assert(r2 === null)
+    parser.read() match {
+      case Right(Some(record)) =>
+        assert(record === Array("", "", ""))
+      case _ => fail()
+    }
+    parser.read() match {
+      case Right(None) => Unit
+      case _ => fail()
+    }
   }
 
   /**
@@ -315,8 +347,9 @@ class CsvParserTest extends FunSuite {
    * </dl>
    */
   run_parser("CASE014", "\r,") { parser =>
-    intercept[CsvException] {
-      parser.read()
+    parser.read() match {
+      case Left(_) => Unit
+      case _ => fail()
     }
   }
 
@@ -335,8 +368,9 @@ class CsvParserTest extends FunSuite {
    * </dl>
    */
   run_parser("CASE015", "\r\"") { parser =>
-    intercept[CsvException] {
-      parser.read()
+    parser.read() match {
+      case Left(_) => Unit
+      case _ => fail()
     }
   }
 
@@ -355,8 +389,9 @@ class CsvParserTest extends FunSuite {
    * </dl>
    */
   run_parser("CASE016", "\ra") { parser =>
-    intercept[CsvException] {
-      parser.read()
+    parser.read() match {
+      case Left(_) => Unit
+      case _ => fail()
     }
   }
 
@@ -375,13 +410,15 @@ class CsvParserTest extends FunSuite {
    * </dl>
    */
   run_parser("CASE100", "aa,bb") { parser =>
-    val r1 = parser.read()
-    assert(r1 != null)
-    assert(r1.length === 2)
-    assert(r1(0) === "aa")
-    assert(r1(1) === "bb")
-    val r2 = parser.read()
-    assert(r2 === null)
+    parser.read() match {
+      case Right(Some(record)) =>
+        assert(record === Array("aa", "bb"))
+      case _ => fail()
+    }
+    parser.read() match {
+      case Right(None) => Unit
+      case _ => fail()
+    }
   }
 
   /**
@@ -399,13 +436,15 @@ class CsvParserTest extends FunSuite {
    * </dl>
    */
   run_parser("CASE101", "aa,bb\r\n") { parser =>
-    val r1 = parser.read()
-    assert(r1 != null)
-    assert(r1.length === 2)
-    assert(r1(0) === "aa")
-    assert(r1(1) === "bb")
-    val r2 = parser.read()
-    assert(r2 === null)
+    parser.read() match {
+      case Right(Some(record)) =>
+        assert(record === Array("aa", "bb"))
+      case _ => fail()
+    }
+    parser.read() match {
+      case Right(None) => Unit
+      case _ => fail()
+    }
   }
 
   /**
@@ -423,13 +462,15 @@ class CsvParserTest extends FunSuite {
    * </dl>
    */
   run_parser("CASE102", "aa,bb\n") { parser =>
-    val r1 = parser.read()
-    assert(r1 != null)
-    assert(r1.length === 2)
-    assert(r1(0) === "aa")
-    assert(r1(1) === "bb")
-    val r2 = parser.read()
-    assert(r2 === null)
+    parser.read() match {
+      case Right(Some(record)) =>
+        assert(record === Array("aa", "bb"))
+      case _ => fail()
+    }
+    parser.read() match {
+      case Right(None) => Unit
+      case _ => fail()
+    }
   }
 
   /**
@@ -448,18 +489,20 @@ class CsvParserTest extends FunSuite {
    * </dl>
    */
   run_parser("CASE103", "aa,bb\r\ncc,dd") { parser =>
-    val r1 = parser.read()
-    assert(r1 != null)
-    assert(r1.length === 2)
-    assert(r1(0) === "aa")
-    assert(r1(1) === "bb")
-    val r2 = parser.read()
-    assert(r2 != null)
-    assert(r2.length === 2)
-    assert(r2(0) === "cc")
-    assert(r2(1) === "dd")
-    val r3 = parser.read()
-    assert(r3 === null)
+    parser.read() match {
+      case Right(Some(record)) =>
+        assert(record === Array("aa", "bb"))
+      case _ => fail()
+    }
+    parser.read() match {
+      case Right(Some(record)) =>
+        assert(record === Array("cc", "dd"))
+      case _ => fail()
+    }
+    parser.read() match {
+      case Right(None) => Unit
+      case _ => fail()
+    }
   }
 
   /**
@@ -478,18 +521,20 @@ class CsvParserTest extends FunSuite {
    * </dl>
    */
   run_parser("CASE104", "aa,bb\r\ncc,dd\r\n") { parser =>
-    val r1 = parser.read()
-    assert(r1 != null)
-    assert(r1.length === 2)
-    assert(r1(0) === "aa")
-    assert(r1(1) === "bb")
-    val r2 = parser.read()
-    assert(r2 != null)
-    assert(r2.length === 2)
-    assert(r2(0) === "cc")
-    assert(r2(1) === "dd")
-    val r3 = parser.read()
-    assert(r3 === null)
+    parser.read() match {
+      case Right(Some(record)) =>
+        assert(record === Array("aa", "bb"))
+      case _ => fail()
+    }
+    parser.read() match {
+      case Right(Some(record)) =>
+        assert(record === Array("cc", "dd"))
+      case _ => fail()
+    }
+    parser.read() match {
+      case Right(None) => Unit
+      case _ => fail()
+    }
   }
 
   /**
@@ -507,13 +552,15 @@ class CsvParserTest extends FunSuite {
    * </dl>
    */
   run_parser("CASE105", "a\"a,b\"\"b\r\n") { parser =>
-    val r1 = parser.read()
-    assert(r1 != null)
-    assert(r1.length === 2)
-    assert(r1(0) === "a\"a")
-    assert(r1(1) === "b\"\"b")
-    val r2 = parser.read()
-    assert(r2 === null)
+    parser.read() match {
+      case Right(Some(record)) =>
+        assert(record === Array("a\"a", "b\"\"b"))
+      case _ => fail()
+    }
+    parser.read() match {
+      case Right(None) => Unit
+      case _ => fail()
+    }
   }
 
   /**
@@ -531,13 +578,15 @@ class CsvParserTest extends FunSuite {
    * </dl>
    */
   run_parser("CASE200", "\"aa\",\"bb\"") { parser =>
-    val r1 = parser.read()
-    assert(r1 != null)
-    assert(r1.length === 2)
-    assert(r1(0) === "aa")
-    assert(r1(1) === "bb")
-    val r2 = parser.read()
-    assert(r2 === null)
+    parser.read() match {
+      case Right(Some(record)) =>
+        assert(record === Array("aa", "bb"))
+      case _ => fail()
+    }
+    parser.read() match {
+      case Right(None) => Unit
+      case _ => fail()
+    }
   }
 
   /**
@@ -555,13 +604,15 @@ class CsvParserTest extends FunSuite {
    * </dl>
    */
   run_parser("CASE201", "\"aa\",\"bb\"\r\n") { parser =>
-    val r1 = parser.read()
-    assert(r1 != null)
-    assert(r1.length === 2)
-    assert(r1(0) === "aa")
-    assert(r1(1) === "bb")
-    val r2 = parser.read()
-    assert(r2 === null)
+    parser.read() match {
+      case Right(Some(record)) =>
+        assert(record === Array("aa", "bb"))
+      case _ => fail()
+    }
+    parser.read() match {
+      case Right(None) => Unit
+      case _ => fail()
+    }
   }
 
   /**
@@ -579,13 +630,15 @@ class CsvParserTest extends FunSuite {
    * </dl>
    */
   run_parser("CASE202", "\"aa\",\"bb\"\n") { parser =>
-    val r1 = parser.read()
-    assert(r1 != null)
-    assert(r1.length === 2)
-    assert(r1(0) === "aa")
-    assert(r1(1) === "bb")
-    val r2 = parser.read()
-    assert(r2 === null)
+    parser.read() match {
+      case Right(Some(record)) =>
+        assert(record === Array("aa", "bb"))
+      case _ => fail()
+    }
+    parser.read() match {
+      case Right(None) => Unit
+      case _ => fail()
+    }
   }
 
   /**
@@ -604,18 +657,20 @@ class CsvParserTest extends FunSuite {
    * </dl>
    */
   run_parser("CASE203", "\"aa\",\"bb\"\r\ncc,dd") { parser =>
-    val r1 = parser.read()
-    assert(r1 != null)
-    assert(r1.length === 2)
-    assert(r1(0) === "aa")
-    assert(r1(1) === "bb")
-    val r2 = parser.read()
-    assert(r2 != null)
-    assert(r2.length === 2)
-    assert(r2(0) === "cc")
-    assert(r2(1) === "dd")
-    val r3 = parser.read()
-    assert(r3 === null)
+    parser.read() match {
+      case Right(Some(record)) =>
+        assert(record === Array("aa", "bb"))
+      case _ => fail()
+    }
+    parser.read() match {
+      case Right(Some(record)) =>
+        assert(record === Array("cc", "dd"))
+      case _ => fail()
+    }
+    parser.read() match {
+      case Right(None) => Unit
+      case _ => fail()
+    }
   }
 
   /**
@@ -634,18 +689,20 @@ class CsvParserTest extends FunSuite {
    * </dl>
    */
   run_parser("CASE204", "\"aa\",\"bb\"\r\ncc,dd\r\n") { parser =>
-    val r1 = parser.read()
-    assert(r1 != null)
-    assert(r1.length === 2)
-    assert(r1(0) === "aa")
-    assert(r1(1) === "bb")
-    val r2 = parser.read()
-    assert(r2 != null)
-    assert(r2.length === 2)
-    assert(r2(0) === "cc")
-    assert(r2(1) === "dd")
-    val r3 = parser.read()
-    assert(r3 === null)
+    parser.read() match {
+      case Right(Some(record)) =>
+        assert(record === Array("aa", "bb"))
+      case _ => fail()
+    }
+    parser.read() match {
+      case Right(Some(record)) =>
+        assert(record === Array("cc", "dd"))
+      case _ => fail()
+    }
+    parser.read() match {
+      case Right(None) => Unit
+      case _ => fail()
+    }
   }
 
   /**
@@ -664,18 +721,20 @@ class CsvParserTest extends FunSuite {
    * </dl>
    */
   run_parser("CASE205", "\"a\"\"a\",\"b,b\"\r\n\"c\rc\",\"d\nd\"\r\n") { parser =>
-    val r1 = parser.read()
-    assert(r1 != null)
-    assert(r1.length === 2)
-    assert(r1(0) === "a\"a")
-    assert(r1(1) === "b,b")
-    val r2 = parser.read()
-    assert(r2 != null)
-    assert(r2.length === 2)
-    assert(r2(0) === "c\rc")
-    assert(r2(1) === "d\nd")
-    val r3 = parser.read()
-    assert(r3 === null)
+    parser.read() match {
+      case Right(Some(record)) =>
+        assert(record === Array("a\"a", "b,b"))
+      case _ => fail()
+    }
+    parser.read() match {
+      case Right(Some(record)) =>
+        assert(record === Array("c\rc", "d\nd"))
+      case _ => fail()
+    }
+    parser.read() match {
+      case Right(None) => Unit
+      case _ => fail()
+    }
   }
 
   /**
@@ -693,8 +752,9 @@ class CsvParserTest extends FunSuite {
    * </dl>
    */
   run_parser("CASE206", "\"a\"a\"") { parser =>
-    intercept[CsvException] {
-      parser.read()
+    parser.read() match {
+      case Left(_) => Unit
+      case _ => fail()
     }
   }
 
@@ -713,8 +773,9 @@ class CsvParserTest extends FunSuite {
    * </dl>
    */
   run_parser("CASE207", "\"a") { parser =>
-    intercept[CsvException] {
-      parser.read()
+    parser.read() match {
+      case Left(_) => Unit
+      case _ => fail()
     }
   }
 

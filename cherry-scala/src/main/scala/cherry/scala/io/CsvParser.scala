@@ -44,8 +44,7 @@ class CsvParser(reader: Reader) {
    * @throws CsvException
    *             CSV形式不正。
    */
-  @throws(classOf[CsvException])
-  def read(): Array[String] =
+  def read(): Either[String, Option[Array[String]]] =
     read_main(RECORD_BEGIN, new StringBuilder, new ArrayBuffer[String])
 
   /**
@@ -53,9 +52,9 @@ class CsvParser(reader: Reader) {
    */
   private def read_main(state: State,
     field: StringBuilder,
-    record: ArrayBuffer[String]): Array[String] =
+    record: ArrayBuffer[String]): Either[String, Option[Array[String]]] =
     if (state == RECORD_END) {
-      if (record.isEmpty) null else record.toArray[String]
+      Right(Option(if (record.isEmpty) null else record.toArray[String]))
     } else {
       val ch = reader.read()
       state(ch) match {
@@ -65,7 +64,7 @@ class CsvParser(reader: Reader) {
         case Trans(Action.FLUSH, nextState) => read_main(nextState,
           new StringBuilder,
           record += field.toString)
-        case Trans(Action.ERROR, _) => throw new CsvException("Invalid CSV format")
+        case Trans(Action.ERROR, _) => Left("Invalid CSV format")
         case Trans(_, nextState) => read_main(nextState,
           field,
           record)
