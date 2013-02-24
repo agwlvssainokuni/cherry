@@ -32,28 +32,15 @@ object Sample {
   def main(args: Array[String]) {
     val parser: CsvParser = new CsvParser(Source.fromFile(args(0)))
     try {
-      readLoop(parser)
+      for (record <- parser) {
+        print("<R>")
+        print(record.mkString("<F>", "</F><F>", "</F>"))
+        print("</R>")
+      }
+    } catch {
+      case ex: CsvException => println("error: " + ex.getMessage)
     } finally {
       parser.close()
-    }
-  }
-
-  /**
-   * レコード読込みの本体
-   */
-  def readLoop(parser: CsvParser) {
-    parser.read() match {
-      case Right(Some(record)) =>
-        print("<R>")
-        for (field <- record) {
-          print("<F>")
-          print(field)
-          print("</F>")
-        }
-        print("</R>")
-        readLoop(parser)
-      case Right(None) => Unit
-      case Left(err) => println("error: " + err)
     }
   }
 
