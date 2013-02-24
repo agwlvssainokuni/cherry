@@ -16,8 +16,7 @@
 
 package cherry.scala.io
 
-import java.io.BufferedReader
-import java.io.FileReader
+import scala.io.Source
 
 /**
  * CSVパーサコマンドライン実行サンプル.
@@ -31,9 +30,9 @@ object Sample {
    *            コマンドライン引数
    */
   def main(args: Array[String]) {
-    val parser: CsvParser = new CsvParser(new BufferedReader(new FileReader(args(0))))
+    val parser: CsvParser = new CsvParser(Source.fromFile(args(0)))
     try {
-      read_loop(parser)
+      readLoop(parser)
     } finally {
       parser.close()
     }
@@ -42,7 +41,7 @@ object Sample {
   /**
    * レコード読込みの本体
    */
-  def read_loop(parser: CsvParser) {
+  def readLoop(parser: CsvParser) {
     parser.read() match {
       case Right(Some(record)) =>
         print("<R>")
@@ -52,7 +51,7 @@ object Sample {
           print("</F>")
         }
         print("</R>")
-        read_loop(parser)
+        readLoop(parser)
       case Right(None) => Unit
       case Left(err) => println("error: " + err)
     }

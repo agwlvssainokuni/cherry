@@ -17,8 +17,8 @@
 package cherry.scala.io
 
 import java.io.StringReader
-
 import org.scalatest.FunSuite
+import scala.io.Source
 
 /**
  * {@link CsvParser}の試験.
@@ -781,7 +781,7 @@ class CsvParserTest extends FunSuite {
 
   def run_parser(name: String, data: String)(ptest: (CsvParser) => Unit) {
     test(name) {
-      val parser = new CsvParser(new StringReader(data))
+      val parser = new CsvParser(Source.fromString(data))
       try {
         ptest(parser)
       } finally {

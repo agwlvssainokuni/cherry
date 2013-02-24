@@ -16,9 +16,12 @@
 
 package cherry.scala.io
 
-import java.io.Reader
+import java.io.IOException
 
 import scala.collection.mutable.ArrayBuffer
+import scala.io.Source
+
+class CsvException(msg: String) extends IOException(msg)
 
 /**
  * CSVパーサ.<br>
@@ -34,7 +37,35 @@ import scala.collection.mutable.ArrayBuffer
  * <li>データの最後 (end of file) はLFが無くてもエラーとはしない。(引用データ (escaped) 中を除く)</li>
  * </ul>
  */
-class CsvParser(reader: Reader) extends CsvState {
+class CsvParser(source: Source) extends Iterator[Array[String]] with CsvState {
+
+  private var currentRecord: Either[String, Option[Array[String]]] = null
+
+  def hasNext: Boolean =
+    ensureRecord match {
+      case Right(Some(_)) =>
+        true
+      case Right(None) =>
+        false
+      case Left(err) =>
+        throw new CsvException(err)
+    }
+
+  def next(): Array[String] =
+    ensureRecord match {
+      case Right(Some(record)) =>
+        currentRecord = null
+        record
+      case Right(None) =>
+        throw new IllegalStateException("No CSV record")
+      case Left(err) =>
+        throw new CsvException(err)
+    }
+
+  private def ensureRecord(): Either[String, Option[Array[String]]] = {
+    currentRecord = if (currentRecord == null) read() else currentRecord
+    currentRecord
+  }
 
   /**
    * CSVレコード読取り.<br>
@@ -57,7 +88,7 @@ class CsvParser(reader: Reader) extends CsvState {
     if (curState == RecordEndState)
       Right(if (record.isEmpty) None else Some(record.toArray))
     else {
-      val ch = reader.read()
+      val ch = if (source.hasNext) source.next() else -1
       curState(ch) match {
         case (Action.NONE, nextState) =>
           readMain(
@@ -82,6 +113,6 @@ class CsvParser(reader: Reader) extends CsvState {
   /**
    * データ読取り元をクローズする.<br>
    */
-  def close() = reader.close()
+  def close() = source.close()
 
 }
