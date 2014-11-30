@@ -3,9 +3,6 @@
 
 内訳
 ----
-* cherry-util: Javaユーティリティ
-   * CSVパーサ
-   * IPアドレス操作 (IPv6, IPv4)
 * cherry-logback: Javaユーティリティ (Logback前提)
    * fluentd転送機能
 * sample/
